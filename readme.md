@@ -7,3 +7,4 @@ designed in relation to the available letters.
 Made with Glyphs Mini
 
 https://glyphsapp.com/tutorials/kerning
+https://www.schoolofmotion.com/blog/custom-font-illustrator-fontforge
