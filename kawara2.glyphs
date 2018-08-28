@@ -2,7 +2,18 @@
 DisplayStrings = (
 N,
 n,
-6
+M,
+m,
+Y,
+J,
+L,
+I,
+Z,
+X,
+D,
+B,
+d,
+i
 );
 copyright = 2018;
 date = "2018-08-19 19:12:34 +0000";
@@ -137,11 +148,41 @@ unicode = 0043;
 },
 {
 glyphname = D;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 22:06:11 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 699 LINE",
+"60 0 LINE",
+"350 0 LINE SMOOTH",
+"420 0 OFFCURVE",
+"610 30 OFFCURVE",
+"610 340 CURVE SMOOTH",
+"610 660 OFFCURVE",
+"400 699 OFFCURVE",
+"331 699 CURVE SMOOTH"
+);
+},
+{
+closed = 1;
+nodes = (
+"406 596 OFFCURVE",
+"489 544 OFFCURVE",
+"489 338 CURVE SMOOTH",
+"489 140 OFFCURVE",
+"399 103 OFFCURVE",
+"348 103 CURVE SMOOTH",
+"183 103 LINE",
+"183 596 LINE",
+"348 596 LINE SMOOTH"
+);
+}
+);
 width = 600;
 }
 );
@@ -268,12 +309,23 @@ unicode = 0048;
 },
 {
 glyphname = I;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:42:16 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 0 LINE",
+"160 0 LINE",
+"160 700 LINE",
+"60 700 LINE"
+);
+}
+);
+width = 220;
 }
 );
 unicode = 0049;
@@ -371,12 +423,32 @@ unicode = 004C;
 },
 {
 glyphname = M;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:18:34 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+paths = (
+{
+closed = 1;
+nodes = (
+"163 0 LINE",
+"163 423 LINE",
+"313 0 LINE",
+"378 0 LINE",
+"521 423 LINE",
+"521 0 LINE",
+"624 0 LINE",
+"624 700 LINE",
+"506 700 LINE",
+"344 222 LINE",
+"176 700 LINE",
+"60 700 LINE",
+"60 0 LINE"
+);
+}
+);
+width = 684;
 }
 );
 unicode = 004D;
@@ -663,12 +735,32 @@ unicode = 0057;
 },
 {
 glyphname = X;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:53:54 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+paths = (
+{
+closed = 1;
+nodes = (
+"431 700 LINE",
+"60 0 LINE",
+"176 0 LINE",
+"552 699 LINE"
+);
+},
+{
+closed = 1;
+nodes = (
+"176 700 LINE",
+"60 700 LINE",
+"431 0 LINE",
+"552 1 LINE"
+);
+}
+);
+width = 612;
 }
 );
 unicode = 0058;
@@ -703,12 +795,27 @@ unicode = 0059;
 },
 {
 glyphname = Z;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:50:03 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+paths = (
+{
+closed = 1;
+nodes = (
+"80 699 LINE",
+"80 596 LINE",
+"375 596 LINE",
+"60 0 LINE",
+"494 0 LINE",
+"494 103 LINE",
+"234 103 LINE",
+"554 699 LINE"
+);
+}
+);
+width = 614;
 }
 );
 unicode = 005A;
@@ -763,9 +870,15 @@ unicode = 0063;
 },
 {
 glyphname = d;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 22:06:54 +0000";
 layers = (
 {
+components = (
+{
+name = D;
+transform = "{1, 0, 0, 1, 0, 0}";
+}
+);
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
 width = 600;
@@ -841,12 +954,18 @@ unicode = 0068;
 },
 {
 glyphname = i;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:42:45 +0000";
 layers = (
 {
+components = (
+{
+name = I;
+transform = "{1, 0, 0, 1, 0, 0}";
+}
+);
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+width = 220;
 }
 );
 unicode = 0069;
@@ -907,12 +1026,18 @@ unicode = 006C;
 },
 {
 glyphname = m;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:18:46 +0000";
 layers = (
 {
+components = (
+{
+name = M;
+transform = "{1, 0, 0, 1, 0, 0}";
+}
+);
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+width = 684;
 }
 );
 unicode = 006D;
@@ -1105,12 +1230,18 @@ unicode = 0079;
 },
 {
 glyphname = z;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:50:31 +0000";
 layers = (
 {
+components = (
+{
+name = Z;
+transform = "{1, 0, 0, 1, 0, 0}";
+}
+);
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+width = 614;
 }
 );
 unicode = 007A;
