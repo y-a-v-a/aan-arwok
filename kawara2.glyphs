@@ -148,7 +148,7 @@ unicode = 0043;
 },
 {
 glyphname = D;
-lastChange = "2018-08-28 22:06:11 +0000";
+lastChange = "2018-08-28 22:07:59 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -183,7 +183,7 @@ nodes = (
 );
 }
 );
-width = 600;
+width = 670;
 }
 );
 unicode = 0044;
