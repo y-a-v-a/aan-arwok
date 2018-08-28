@@ -1,5 +1,7 @@
 {
 DisplayStrings = (
+N,
+n,
 6
 );
 copyright = 2018;
@@ -381,12 +383,29 @@ unicode = 004D;
 },
 {
 glyphname = N;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:11:49 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 0 LINE",
+"60 700 LINE",
+"179 700 LINE",
+"457 179 LINE",
+"457 700 LINE",
+"561 700 LINE",
+"561 0 LINE",
+"437 0 LINE",
+"164 491 LINE",
+"164 0 LINE"
+);
+}
+);
+width = 621;
 }
 );
 unicode = 004E;
@@ -900,12 +919,18 @@ unicode = 006D;
 },
 {
 glyphname = n;
-lastChange = "2018-08-19 19:12:35 +0000";
+lastChange = "2018-08-28 21:12:04 +0000";
 layers = (
 {
+components = (
+{
+name = N;
+transform = "{1, 0, 0, 1, 0, 0}";
+}
+);
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
 name = Regular;
-width = 600;
+width = 621;
 }
 );
 unicode = 006E;
