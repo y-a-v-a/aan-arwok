@@ -1,6 +1,6 @@
 {
 DisplayStrings = (
-DIXYLAND
+"TURGID turgiD"
 );
 copyright = 2018;
 date = "2018-08-19 19:12:34 +0000";
@@ -997,7 +997,7 @@ unicode = 005A;
 },
 {
 glyphname = a;
-lastChange = "2018-08-29 10:03:20 +0000";
+lastChange = "2018-08-29 19:53:56 +0000";
 layers = (
 {
 components = (
@@ -1015,7 +1015,7 @@ unicode = 0061;
 },
 {
 glyphname = b;
-lastChange = "2018-08-23 21:40:04 +0000";
+lastChange = "2018-08-29 19:53:23 +0000";
 layers = (
 {
 components = (
@@ -1069,7 +1069,7 @@ unicode = 0064;
 },
 {
 glyphname = e;
-lastChange = "2018-08-29 08:03:41 +0000";
+lastChange = "2018-08-29 20:07:29 +0000";
 layers = (
 {
 components = (
@@ -1087,7 +1087,7 @@ unicode = 0065;
 },
 {
 glyphname = f;
-lastChange = "2018-08-29 10:03:37 +0000";
+lastChange = "2018-08-29 19:51:52 +0000";
 layers = (
 {
 components = (
@@ -1141,7 +1141,7 @@ unicode = 0068;
 },
 {
 glyphname = i;
-lastChange = "2018-08-29 08:47:32 +0000";
+lastChange = "2018-08-29 20:08:14 +0000";
 layers = (
 {
 components = (
@@ -1249,7 +1249,7 @@ unicode = 006E;
 },
 {
 glyphname = o;
-lastChange = "2018-08-23 21:40:56 +0000";
+lastChange = "2018-08-29 20:06:53 +0000";
 layers = (
 {
 components = (
@@ -1303,7 +1303,7 @@ unicode = 0071;
 },
 {
 glyphname = r;
-lastChange = "2018-08-23 21:41:16 +0000";
+lastChange = "2018-08-29 20:08:00 +0000";
 layers = (
 {
 components = (
@@ -1375,7 +1375,7 @@ unicode = 0075;
 },
 {
 glyphname = v;
-lastChange = "2018-08-29 08:44:48 +0000";
+lastChange = "2018-08-29 20:07:01 +0000";
 layers = (
 {
 components = (
@@ -2267,9 +2267,12 @@ f = "-110";
 };
 a = {
 w = "-200";
+t = "-80";
+v = "-140";
 };
 f = {
 u = "-20";
+a = "-70";
 };
 period = {
 Y = "-160";
@@ -2280,6 +2283,24 @@ O = "-50";
 U = {
 W = "-50";
 V = "-30";
+};
+e = {
+a = "-30";
+r = "-30";
+};
+r = {
+a = "-30";
+g = "-90";
+};
+b = {
+a = "-70";
+};
+v = {
+a = "-160";
+e = "-30";
+};
+o = {
+v = "-100";
 };
 };
 };
