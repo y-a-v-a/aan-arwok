@@ -1,7 +1,4 @@
 {
-DisplayStrings = (
-""
-);
 copyright = 2018;
 date = "2018-08-19 19:12:34 +0000";
 designer = "Vincent Bruijn";
@@ -729,7 +726,7 @@ unicode = 0052;
 },
 {
 glyphname = S;
-lastChange = "2018-08-30 21:04:11 +0000";
+lastChange = "2019-06-12 21:53:35 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -1321,7 +1318,7 @@ unicode = 0072;
 },
 {
 glyphname = s;
-lastChange = "2019-06-12 21:15:12 +0000";
+lastChange = "2019-06-12 21:53:41 +0000";
 layers = (
 {
 components = (
@@ -1584,7 +1581,7 @@ unicode = 0032;
 },
 {
 glyphname = three;
-lastChange = "2018-08-30 21:31:58 +0000";
+lastChange = "2019-06-12 21:53:31 +0000";
 layers = (
 {
 backgroundImage = {
@@ -1789,7 +1786,7 @@ unicode = 0036;
 },
 {
 glyphname = seven;
-lastChange = "2018-08-30 21:47:12 +0000";
+lastChange = "2019-06-12 21:53:19 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -2285,7 +2282,7 @@ G = "-90";
 I = "-10";
 L = "-20";
 O = "-70";
-S = "-10";
+S = "-30";
 T = "-80";
 U = "-30";
 V = "-110";
@@ -2496,7 +2493,7 @@ four = "-60";
 nine = "-40";
 one = "-60";
 period = "-140";
-seven = "-40";
+seven = "-60";
 six = "-50";
 three = "-40";
 two = "-50";
@@ -2531,6 +2528,7 @@ g = "-90";
 d = "-20";
 o = "-70";
 e = "-30";
+s = "-30";
 };
 s = {
 z = "-40";
@@ -2548,7 +2546,7 @@ one = "-30";
 period = "-170";
 seven = "-30";
 six = "-110";
-three = "-60";
+three = "-70";
 two = "-60";
 zero = "-50";
 A = "-100";
