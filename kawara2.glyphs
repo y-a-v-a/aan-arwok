@@ -1,6 +1,9 @@
 {
 DisplayStrings = (
-W
+",",
+"VEX'DO'M",
+"'",
+"QQQF Tf "
 );
 copyright = 2018;
 date = "2018-08-19 19:12:34 +0000";
@@ -472,7 +475,7 @@ unicode = 004C;
 },
 {
 glyphname = M;
-lastChange = "2019-07-02 19:57:38 +0000";
+lastChange = "2019-07-10 07:26:46 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -780,7 +783,7 @@ unicode = 0053;
 },
 {
 glyphname = T;
-lastChange = "2019-07-06 21:07:03 +0000";
+lastChange = "2019-07-10 07:23:53 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -1249,7 +1252,7 @@ unicode = 006E;
 },
 {
 glyphname = o;
-lastChange = "2019-07-06 21:18:58 +0000";
+lastChange = "2019-07-10 07:23:00 +0000";
 layers = (
 {
 components = (
@@ -1339,7 +1342,7 @@ unicode = 0073;
 },
 {
 glyphname = t;
-lastChange = "2019-07-06 21:07:15 +0000";
+lastChange = "2019-07-10 07:23:44 +0000";
 layers = (
 {
 components = (
@@ -2000,6 +2003,29 @@ width = 263;
 unicode = 002E;
 },
 {
+glyphname = quotesingle;
+lastChange = "2019-07-10 07:28:27 +0000";
+layers = (
+{
+layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
+name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 545 LINE",
+"162 545 LINE",
+"225 702 LINE",
+"114 702 LINE"
+);
+}
+);
+width = 285;
+}
+);
+unicode = 0027;
+},
+{
 glyphname = hyphen;
 lastChange = "2018-08-29 08:33:27 +0000";
 layers = (
@@ -2013,7 +2039,7 @@ unicode = 002D;
 },
 {
 glyphname = space;
-lastChange = "2018-08-30 19:27:25 +0000";
+lastChange = "2019-07-10 07:23:36 +0000";
 layers = (
 {
 layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
@@ -2277,6 +2303,7 @@ x = "-20";
 y = "-30";
 z = "-20";
 f = "-20";
+space = "-50";
 };
 G = {
 A = "-60";
@@ -2561,6 +2588,7 @@ x = "-50";
 y = "-110";
 Z = "-50";
 z = "-50";
+quotesingle = "-50";
 };
 P = {
 A = "-120";
@@ -2854,6 +2882,7 @@ o = "-50";
 y = "-50";
 Z = "-10";
 z = "-10";
+quotesingle = "-60";
 };
 Y = {
 A = "-150";
@@ -3182,6 +3211,7 @@ z = "-20";
 f = "-20";
 F = "-20";
 comma = "-120";
+space = "-50";
 };
 five = {
 comma = "-50";
@@ -3707,6 +3737,9 @@ two = "-60";
 };
 space = {
 I = 30;
+o = "-30";
+t = "-60";
+T = "-60";
 };
 t = {
 A = "-100";
@@ -3970,6 +4003,10 @@ Y = "-140";
 y = "-140";
 Z = "-50";
 z = "-50";
+};
+quotesingle = {
+M = "-40";
+D = "-30";
 };
 };
 };
