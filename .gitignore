@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+master_ufo/
+instance_ufo/
+.DS_Store
+kerning.json

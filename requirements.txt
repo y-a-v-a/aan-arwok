@@ -1,0 +1,3 @@
+# font build toolchain — replaces Glyphs Mini for compiling kawara2.glyphs
+# (fontmake bundles glyphsLib, ufo2ft, fontTools, cffsubr, skia-pathops)
+fontmake>=3.7
