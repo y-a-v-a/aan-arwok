@@ -4,10 +4,45 @@ Tracing a lot of images of "date paintings" from On Kawara's "Today" series, I'v
 as complete as possible. I couldn't find images with a "H", "Q", "W" or "X" so those will be
 designed in relation to the available letters.
 
-Made with Glyphs Mini
+Originally made with Glyphs Mini; now built and kerned with an open-source toolchain
+(glyphsLib + ufo2ft + fontTools) — Glyphs Mini is no longer needed. `kawara2.glyphs`
+is the source of truth; `OnKawara-Regular.otf` is compiled from it.
 
 https://glyphsapp.com/tutorials/kerning
 https://www.schoolofmotion.com/blog/custom-font-illustrator-fontforge
+
+## Building the font
+
+One-time setup (needs Python 3):
+
+    make setup
+
+Compile `kawara2.glyphs` to `OnKawara-Regular.otf` (repo root + `www/`), including
+all kerning as a GPOS table, and refresh `www/kerning.js`:
+
+    make build
+
+## Kerning workbench
+
+Fine-tune kerning in the browser — no font editor required:
+
+    make kern
+
+then open <http://localhost:8765/kern.html>. Type any sample text (or pick a preset),
+click between two letters and nudge with the arrow keys (↑/↓ ±10, ⇧ ±50, ⌥ ±1;
+←/→ walks through the pairs). "sync case" keeps all four case combinations of a
+letter pair identical, since the lowercase glyphs are component copies of the capitals.
+Hitting **Save** writes the pairs back into `kawara2.glyphs` and rebuilds the OTF in
+place — toggle "font's own kerning" to proof the baked-in result.
+
+Without the local server (e.g. the page hosted statically), **Save** downloads a
+`kerning.json` instead; apply it with:
+
+    make apply FILE=kerning.json
+
+Check for pairs whose case combinations disagree:
+
+    make audit
 
 ## Color variants
 
