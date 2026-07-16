@@ -2,7 +2,7 @@ name: Release font
 
 # Manually triggered from the Actions tab. Tags the current commit,
 # builds OnKawara-Regular.otf fresh from kawara2.glyphs, and publishes
-# it as a GitHub Release asset.
+# it (plus a woff2 for the web) as GitHub Release assets.
 
 on:
   workflow_dispatch:
@@ -45,13 +45,22 @@ jobs:
           python-version: "3.12"
 
       - name: Install build toolchain
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt brotli
 
       - name: Build font from source
         run: python tools/build.py
 
-      - name: Name the release asset
-        run: cp OnKawara-Regular.otf "OnKawara-Regular-${{ inputs.version }}.otf"
+      - name: Name the release assets
+        run: |
+          cp OnKawara-Regular.otf "OnKawara-Regular-${{ inputs.version }}.otf"
+          python - "${{ inputs.version }}" <<'PY'
+          import sys
+          from fontTools.ttLib import TTFont
+          version = sys.argv[1]
+          font = TTFont("OnKawara-Regular.otf")
+          font.flavor = "woff2"
+          font.save(f"OnKawara-Regular-{version}.woff2")
+          PY
 
       - name: Create tag and release
         uses: softprops/action-gh-release@v2
@@ -61,4 +70,6 @@ jobs:
           name: On Kawara ${{ inputs.version }}
           prerelease: ${{ inputs.prerelease }}
           generate_release_notes: true
-          files: OnKawara-Regular-${{ inputs.version }}.otf
+          files: |
+            OnKawara-Regular-${{ inputs.version }}.otf
+            OnKawara-Regular-${{ inputs.version }}.woff2
