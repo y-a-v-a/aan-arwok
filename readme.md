@@ -64,6 +64,26 @@ THE QUICK BROWN FOX, JUMPS OVER THE LAZY DOG.
 
 ## Kerning helpers
 
+Test sentences covering the classic collision pairs:
+
+Typical taxi voyages take Yvonne away toward Tokyo's watery pavilions.
+(cap-to-lowercase: Ty ta xi vo ya Yv aw To wa av)
+
+AVALON'S TAXABLE LAVA WAVED AWAY MY VAST WALTZ ROYALTY.
+(all-caps diagonals: AV VA TA AX LA WA AW AY LT TZ TY)
+
+"Wavy fjords justify every gravy flavor," says Ava, offering taffy softly.
+(lowercase + punctuation: wa av vy fj fy ve ry fl ff ft ly, quotes and commas after r/y/a)
+
+Pavel Kovak performs fifty frosty polka party favors, Rex.
+(cap and arm overhangs: Pa av Ko va pe rf fi ft fr po ka rt fa Re ex, comma after s, period after x)
+
+OVAL VOLCANO LAVA COATS AVOCADO PAGODA DOORWAYS TODAY.
+(round caps against diagonals: OV VA VO CA LA AV CO OA DO PA GO OO RW WA AY TO)
+
+JAN.4,1966 CAME BEFORE OCT.31,1978 AND JULY 16,1974.
+(date-painting format: numerals, period after N/T/Y, commas tucked between digits)
+
 WAVERY HAWAIIAN HAVANA PLYWOOD
 VANWAYMAN
 DIFFICULT WAFFLES

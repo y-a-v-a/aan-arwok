@@ -8,102 +8,102 @@ entry here. A pair listed below renders with zero kerning: often correct, but
 worth a look. Paste a row into the kerning workbench (`make kern`) to check it.
 
 - universe: 40 glyphs squared = **1600** ordered pairs
-- kerned (non-zero): **1061**
-- explicitly set to 0: **7**
-- no kerning pair at all: **532**
+- kerned (non-zero): **1316**
+- explicitly set to 0: **18**
+- no kerning pair at all: **266**
 
 ## Explicitly set to 0
 
 These were given a value of exactly 0, so they were considered and settled.
 
-`BR` `IB` `JI` `KP` `QL` `17` `.P`
+`BR` `EB` `EI` `EJ` `EP` `FB` `FH` `FL` `F'` `GH` `GI` `IB` `JI` `KP` `QL` `17` `19` `.P`
 
 ## No kerning pair defined
 
 Grouped by left-hand glyph.
 
-### A  (6)
+### A  (1)
 
 ```
-AD AE AF AK A' A-
+A-
 ```
 
-### B  (12)
+### B  (1)
 
 ```
-BB BE BF BK BL BM BN BP BU B2 B' B-
+B-
 ```
 
-### C  (8)
+### C  (1)
 
 ```
-CI CM CN CP CR CU C' C-
+C-
 ```
 
-### D  (5)
+### D  (1)
 
 ```
-DB DD DP D' D-
+D-
 ```
 
-### E  (10)
+### E  (1)
 
 ```
-EB EF EH EI EJ EK EP E2 E' E-
+E-
 ```
 
-### F  (10)
+### F  (1)
 
 ```
-FB FH FI FK FL FM FN FP F' F-
+F-
 ```
 
-### G  (12)
+### G  (1)
 
 ```
-GB GD GF GH GI GK GP GR GU G0 G' G-
+G-
 ```
 
-### H  (22)
+### H  (6)
 
 ```
-HB HC HD HF HH HJ HK HL HM HN HS HT HX HZ H0 H1 H2 H5 H, H. H' H-
+HD HF HS HT HX H-
 ```
 
-### I  (18)
+### I  (11)
 
 ```
-IE IF II IK IM IP IR IX IY IZ I2 I4 I5 I7 I, I. I' I-
+IE IF II IM IP IZ I2 I, I. I' I-
 ```
 
-### J  (34)
+### J  (9)
 
 ```
-JB JC JD JF JG JH JK JL JM JN JO JP JQ JR JS JT JU JV JW JX JY JZ J0 J1 J2 J3 J4 J5 J6 J7 J8 J9 J' J-
+JM JN JP JR J0 J1 J7 J8 J-
 ```
 
-### K  (5)
+### K  (1)
 
 ```
-KB KH KK K' K-
+K-
 ```
 
-### L  (12)
+### L  (10)
 
 ```
-LB LD LH LI LK LL LM LN LP LR L' L-
+LB LD LH LI LK LM LN LP LR L-
 ```
 
-### M  (24)
+### M  (22)
 
 ```
-MB MC MD MF MH MI ML MR MX MZ M0 M1 M2 M3 M4 M5 M6 M7 M8 M9 M, M. M' M-
+MC MF MH MI ML MR MX MZ M0 M1 M2 M3 M4 M5 M6 M7 M8 M9 M, M. M' M-
 ```
 
-### N  (18)
+### N  (17)
 
 ```
-NA NF NH NL NN NP NR NU NX NZ N2 N4 N5 N7 N, N. N' N-
+NF NH NL NN NP NR NU NX NZ N2 N4 N5 N7 N, N. N' N-
 ```
 
 ### O  (1)
@@ -112,130 +112,130 @@ NA NF NH NL NN NP NR NU NX NZ N2 N4 N5 N7 N, N. N' N-
 O-
 ```
 
-### P  (4)
+### P  (1)
 
 ```
-PB PK P' P-
+P-
 ```
 
-### Q  (17)
+### Q  (8)
 
 ```
-QB QF QH QJ QP QQ QR QU QZ Q2 Q4 Q5 Q6 Q8 Q9 Q' Q-
+QB QF QH QP QQ QR Q9 Q-
 ```
 
-### R  (3)
+### R  (1)
 
 ```
-RB R' R-
+R-
 ```
 
-### S  (6)
+### S  (1)
 
 ```
-SI SK SR S2 S' S-
+S-
 ```
 
-### T  (11)
+### T  (2)
 
 ```
-TB TD TF TK TP TV TW T1 T7 T' T-
+TB T-
 ```
 
-### U  (18)
+### U  (7)
 
 ```
-UC UD UE UF UH UN UP UQ UR UU UX U1 U2 U3 U4 U9 U' U-
+UD UE UF UH UN UU U-
 ```
 
-### V  (4)
+### V  (1)
 
 ```
-VK VT V' V-
+V-
 ```
 
-### W  (5)
+### W  (1)
 
 ```
-WL W1 W7 W' W-
+W-
 ```
 
-### X  (17)
+### X  (2)
 
 ```
-XB XD XF XH XI XK XL XM XN XP XR XT XU XX X, X. X-
+XK X-
 ```
 
-### Y  (8)
+### Y  (2)
 
 ```
-YD YI YK YR Y1 Y7 Y' Y-
+YI Y-
 ```
 
-### Z  (9)
+### Z  (1)
 
 ```
-ZB ZD ZH ZK ZP ZR ZT Z' Z-
+Z-
 ```
 
-### 0  (15)
+### 0  (9)
 
 ```
-0C 0D 0E 0F 0I 0K 0L 0M 0N 0P 0R 0U 08 0' 0-
+0D 0F 0K 0L 0M 0N 0P 0R 0-
 ```
 
-### 1  (18)
+### 1  (15)
 
 ```
-1A 1C 1D 1G 1J 1M 1O 1S 1T 1Y 10 11 13 14 15 16 1' 1-
+1A 1C 1D 1G 1J 1M 1O 1S 1T 11 13 14 16 1' 1-
 ```
 
-### 2  (11)
+### 2  (6)
 
 ```
-2A 2B 2D 2E 2J 2M 2P 2R 2U 2' 2-
+2D 2M 2P 2R 2U 2-
 ```
 
-### 3  (9)
+### 3  (6)
 
 ```
-3D 3E 3F 3K 3M 3R 3U 3' 3-
+3D 3F 3K 3M 3R 3-
 ```
 
-### 4  (16)
+### 4  (11)
 
 ```
-4B 4D 4E 4F 4I 4K 4L 4M 4N 4P 4Q 4R 4U 44 4' 4-
+4B 4D 4F 4I 4K 4L 4M 4N 4P 44 4-
 ```
 
-### 5  (10)
+### 5  (7)
 
 ```
-5D 5M 5Q 5T 5W 5Z 51 56 5' 5-
+5D 5M 5T 5Z 51 56 5-
 ```
 
-### 6  (14)
+### 6  (2)
 
 ```
-6D 6F 6H 6I 6M 6O 6Q 6R 6U 60 68 69 6' 6-
+6U 6-
 ```
 
-### 7  (10)
+### 7  (1)
 
 ```
-7E 7I 7M 7R 7T 7U 7W 7Y 7' 7-
+7-
 ```
 
-### 8  (10)
+### 8  (1)
 
 ```
-8D 8E 8I 8K 8M 8N 8U 86 8' 8-
+8-
 ```
 
-### 9  (8)
+### 9  (7)
 
 ```
-9D 9E 9H 9I 9M 9U 9' 9-
+9D 9H 9I 9M 9U 9' 9-
 ```
 
 ### ,  (18)
@@ -250,10 +250,10 @@ ZB ZD ZH ZK ZP ZR ZT Z' Z-
 .B .D .E .F .H .I .J .K .L .M .N .R .X .. .' .-
 ```
 
-### '  (38)
+### '  (16)
 
 ```
-'A 'B 'C 'E 'F 'G 'H 'I 'J 'K 'L 'N 'O 'P 'Q 'R 'S 'T 'U 'V 'W 'X 'Y 'Z '0 '1 '2 '3 '4 '5 '6 '7 '8 '9 ', '. '' '-
+'B 'E 'F 'H 'I 'K 'L 'N 'P 'R 'T 'U '1 '7 '' '-
 ```
 
 ### -  (40)
@@ -265,4 +265,4 @@ ZB ZD ZH ZK ZP ZR ZT Z' Z-
 ## Notes
 
 - `hyphen` appears in no kerning pair at all — it is unkerned against every glyph.
-- `space` is excluded from the grid above; it currently has 7 kerning pairs (␣ = space): `F␣`, `I␣`, `f␣`, `␣I`, `␣T`, `␣o`, `␣t`.
+- `space` is excluded from the grid above; it currently has 21 kerning pairs (␣ = space): `A␣`, `F␣`, `I␣`, `M␣`, `a␣`, `f␣`, `m␣`, `␣A`, `␣I`, `␣T`, `␣V`, `␣W`, `␣Y`, `␣a`, `␣o`, `␣'`, `␣t`, `␣v`, `␣w`, `␣y`, `0␣`.
