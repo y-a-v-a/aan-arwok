@@ -57,7 +57,6 @@ white on greenish: #e2e3e4 on #323b3f
 
 * ?
 * !
-* -
 
 ## Sentences with all alphabet characters
 
