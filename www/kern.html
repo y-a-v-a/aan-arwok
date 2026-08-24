@@ -125,10 +125,11 @@
         <button data-d="-50">−50</button><button data-d="-10">−10</button><button data-d="-1">−1</button>
         <input type="number" id="kernval" step="1" disabled>
         <button data-d="1">+1</button><button data-d="10">+10</button><button data-d="50">+50</button>
+        <button id="settle" title="store an explicit 0 for this pair">= 0</button>
         <button id="zero" title="remove this kerning pair">✕ pair</button>
       </span>
       <span id="variants"></span>
-      <span id="hint">←/→ walk pairs · ↑/↓ ±10 · ⇧ ±50 · ⌥ ±1</span>
+      <span id="hint">←/→ walk pairs · ↑/↓ ±10 · ⇧ ±50 · ⌥ ±1 · ⌥0 settle 0</span>
     </div>
   </div>
   <aside>
@@ -283,6 +284,11 @@
     const v = parseInt(e.target.value, 10);
     if (!isNaN(v)) { setKern(sel.left, sel.right, v); refreshMargins(); }
   });
+  $("#settle").addEventListener("click", () => {
+    if (!sel) return;
+    setKern(sel.left, sel.right, 0);
+    refreshMargins();
+  });
   $("#zero").addEventListener("click", () => {
     if (!sel) return;
     setKern(sel.left, sel.right, null);
@@ -297,6 +303,10 @@
     else if (e.key === "ArrowRight") { walk(1); e.preventDefault(); }
     else if (e.key === "ArrowUp") { nudge(step); e.preventDefault(); }
     else if (e.key === "ArrowDown") { nudge(-step); e.preventDefault(); }
+    else if (e.altKey && e.code === "Digit0") {
+      if (sel) { setKern(sel.left, sel.right, 0); refreshMargins(); }
+      e.preventDefault();
+    }
   });
 
   // ---------- pair list ----------

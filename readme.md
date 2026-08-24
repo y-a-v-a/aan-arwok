@@ -32,6 +32,8 @@ then open <http://localhost:8765/kern.html>. Type any sample text (or pick a pre
 click between two letters and nudge with the arrow keys (↑/↓ ±10, ⇧ ±50, ⌥ ±1;
 ←/→ walks through the pairs). "sync case" keeps all four case combinations of a
 letter pair identical, since the lowercase glyphs are component copies of the capitals.
+**= 0** stores an explicit zero — the pair is settled and drops out of the gap report
+(`make gaps`) — while **✕ pair** removes the pair entirely (back to "unconsidered").
 Hitting **Save** writes the pairs back into `kawara2.glyphs` and rebuilds the OTF in
 place — toggle "font's own kerning" to proof the baked-in result.
 

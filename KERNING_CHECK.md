@@ -8,15 +8,15 @@ entry here. A pair listed below renders with zero kerning: often correct, but
 worth a look. Paste a row into the kerning workbench (`make kern`) to check it.
 
 - universe: 40 glyphs squared = **1600** ordered pairs
-- kerned (non-zero): **1316**
-- explicitly set to 0: **18**
-- no kerning pair at all: **266**
+- kerned (non-zero): **1364**
+- explicitly set to 0: **157**
+- no kerning pair at all: **79**
 
 ## Explicitly set to 0
 
 These were given a value of exactly 0, so they were considered and settled.
 
-`BR` `EB` `EI` `EJ` `EP` `FB` `FH` `FL` `F'` `GH` `GI` `IB` `JI` `KP` `QL` `17` `19` `.P`
+`BR` `EB` `EI` `EJ` `EN` `EP` `FB` `FH` `FL` `F'` `GE` `GH` `HD` `HF` `HS` `HT` `HX` `IB` `IM` `IP` `IZ` `I2` `I,` `I.` `I'` `JI` `JM` `JN` `JP` `JR` `J0` `J1` `J7` `J8` `KP` `LB` `LD` `LH` `LI` `LK` `LM` `LN` `LP` `LR` `MF` `MH` `MR` `M1` `M2` `M3` `M4` `M5` `M6` `M7` `M8` `M9` `NF` `NH` `NL` `NN` `NP` `NR` `NU` `NX` `NZ` `N2` `N5` `N.` `QB` `QF` `QH` `QL` `QP` `QR` `TB` `UD` `UE` `UF` `UH` `YI` `0D` `0F` `0K` `0L` `0M` `0N` `0P` `0R` `1C` `1G` `1J` `1O` `1S` `1T` `11` `13` `14` `16` `17` `19` `1'` `2D` `2M` `2P` `2R` `2U` `3D` `3F` `3M` `3R` `4B` `4D` `4F` `4I` `4K` `4L` `4M` `4N` `4P` `44` `5D` `5M` `5T` `51` `6U` `9D` `9H` `9I` `9M` `9U` `,D` `,E` `,F` `,H` `,I` `,J` `,K` `,L` `,M` `,N` `,P` `,R` `,X` `,0` `.B` `.D` `.E` `.F` `.H` `.I` `.J` `.K` `.L` `.M` `.N` `.P` `.R`
 
 ## No kerning pair defined
 
@@ -64,22 +64,22 @@ F-
 G-
 ```
 
-### H  (6)
+### H  (1)
 
 ```
-HD HF HS HT HX H-
+H-
 ```
 
-### I  (11)
+### I  (1)
 
 ```
-IE IF II IM IP IZ I2 I, I. I' I-
+I-
 ```
 
-### J  (9)
+### J  (1)
 
 ```
-JM JN JP JR J0 J1 J7 J8 J-
+J-
 ```
 
 ### K  (1)
@@ -88,22 +88,22 @@ JM JN JP JR J0 J1 J7 J8 J-
 K-
 ```
 
-### L  (10)
+### L  (1)
 
 ```
-LB LD LH LI LK LM LN LP LR L-
+L-
 ```
 
-### M  (22)
+### M  (1)
 
 ```
-MC MF MH MI ML MR MX MZ M0 M1 M2 M3 M4 M5 M6 M7 M8 M9 M, M. M' M-
+M-
 ```
 
-### N  (17)
+### N  (1)
 
 ```
-NF NH NL NN NP NR NU NX NZ N2 N4 N5 N7 N, N. N' N-
+N-
 ```
 
 ### O  (1)
@@ -118,10 +118,10 @@ O-
 P-
 ```
 
-### Q  (8)
+### Q  (1)
 
 ```
-QB QF QH QP QQ QR Q9 Q-
+Q-
 ```
 
 ### R  (1)
@@ -136,16 +136,16 @@ R-
 S-
 ```
 
-### T  (2)
+### T  (1)
 
 ```
-TB T-
+T-
 ```
 
-### U  (7)
+### U  (1)
 
 ```
-UD UE UF UH UN UU U-
+U-
 ```
 
 ### V  (1)
@@ -160,16 +160,16 @@ V-
 W-
 ```
 
-### X  (2)
+### X  (1)
 
 ```
-XK X-
+X-
 ```
 
-### Y  (2)
+### Y  (1)
 
 ```
-YI Y-
+Y-
 ```
 
 ### Z  (1)
@@ -178,46 +178,46 @@ YI Y-
 Z-
 ```
 
-### 0  (9)
+### 0  (1)
 
 ```
-0D 0F 0K 0L 0M 0N 0P 0R 0-
+0-
 ```
 
-### 1  (15)
+### 1  (1)
 
 ```
-1A 1C 1D 1G 1J 1M 1O 1S 1T 11 13 14 16 1' 1-
+1-
 ```
 
-### 2  (6)
+### 2  (1)
 
 ```
-2D 2M 2P 2R 2U 2-
+2-
 ```
 
-### 3  (6)
+### 3  (1)
 
 ```
-3D 3F 3K 3M 3R 3-
+3-
 ```
 
-### 4  (11)
+### 4  (1)
 
 ```
-4B 4D 4F 4I 4K 4L 4M 4N 4P 44 4-
+4-
 ```
 
-### 5  (7)
+### 5  (1)
 
 ```
-5D 5M 5T 5Z 51 56 5-
+5-
 ```
 
-### 6  (2)
+### 6  (1)
 
 ```
-6U 6-
+6-
 ```
 
 ### 7  (1)
@@ -232,28 +232,28 @@ Z-
 8-
 ```
 
-### 9  (7)
+### 9  (1)
 
 ```
-9D 9H 9I 9M 9U 9' 9-
+9-
 ```
 
-### ,  (18)
+### ,  (1)
 
 ```
-,B ,D ,E ,F ,H ,I ,J ,K ,L ,M ,N ,P ,R ,X ,0 ,, ,' ,-
+,-
 ```
 
-### .  (16)
+### .  (1)
 
 ```
-.B .D .E .F .H .I .J .K .L .M .N .R .X .. .' .-
+.-
 ```
 
-### '  (16)
+### '  (1)
 
 ```
-'B 'E 'F 'H 'I 'K 'L 'N 'P 'R 'T 'U '1 '7 '' '-
+'-
 ```
 
 ### -  (40)
@@ -265,4 +265,4 @@ Z-
 ## Notes
 
 - `hyphen` appears in no kerning pair at all — it is unkerned against every glyph.
-- `space` is excluded from the grid above; it currently has 21 kerning pairs (␣ = space): `A␣`, `F␣`, `I␣`, `M␣`, `a␣`, `f␣`, `m␣`, `␣A`, `␣I`, `␣T`, `␣V`, `␣W`, `␣Y`, `␣a`, `␣o`, `␣'`, `␣t`, `␣v`, `␣w`, `␣y`, `0␣`.
+- `space` is excluded from the grid above; it currently has 82 kerning pairs (␣ = space): `A␣`, `B␣`, `D␣`, `E␣`, `F␣`, `H␣`, `I␣`, `J␣`, `K␣`, `L␣`, `M␣`, `N␣`, `P␣`, `R␣`, `S␣`, `T␣`, `Y␣`, `Z␣`, `a␣`, `b␣`, `d␣`, `e␣`, `f␣`, `h␣`, `i␣`, `j␣`, `k␣`, `l␣`, `m␣`, `n␣`, `1␣`, `p␣`, `.␣`, `r␣`, `s␣`, `7␣`, `6␣`, `␣A`, `␣B`, `␣D`, `␣E`, `␣G`, `␣H`, `␣I`, `␣L`, `␣M`, `␣N`, `␣Q`, `␣R`, `␣T`, `␣V`, `␣W`, `␣Y`, `␣a`, `␣b`, `␣d`, `␣e`, `␣5`, `␣4`, `␣g`, `␣h`, `␣i`, `␣l`, `␣m`, `␣n`, `␣9`, `␣o`, `␣1`, `␣q`, `␣'`, `␣r`, `␣t`, `␣3`, `␣2`, `␣v`, `␣w`, `␣y`, `␣0`, `t␣`, `y␣`, `z␣`, `0␣`.

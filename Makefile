@@ -8,6 +8,7 @@ help:
 	@echo "make kern    - build, then serve the kerning workbench at http://localhost:8765/kern.html"
 	@echo "make apply FILE=kerning.json - apply a workbench JSON export to kawara2.glyphs and rebuild"
 	@echo "make audit   - report case-inconsistent kerning pairs"
+	@echo "make gaps    - regenerate KERNING_CHECK.md (pairs with no kerning)"
 
 setup:
 	$(PY) -m venv .venv
@@ -26,4 +27,7 @@ apply:
 audit:
 	$(VPY) tools/kawara_kerning.py audit
 
-.PHONY: help setup build kern apply audit
+gaps:
+	$(VPY) tools/kawara_kerning.py gaps
+
+.PHONY: help setup build kern apply audit gaps
