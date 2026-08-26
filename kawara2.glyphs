@@ -2049,6 +2049,98 @@ width = 331;
 unicode = 002D;
 },
 {
+glyphname = endash;
+lastChange = "2026-08-26 00:00:00 +0000";
+layers = (
+{
+layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
+name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 314 LINE",
+"440 314 LINE",
+"440 418 LINE",
+"60 418 LINE"
+);
+}
+);
+width = 500;
+}
+);
+unicode = 2013;
+},
+{
+glyphname = emdash;
+lastChange = "2026-08-26 00:00:00 +0000";
+layers = (
+{
+layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
+name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 314 LINE",
+"940 314 LINE",
+"940 418 LINE",
+"60 418 LINE"
+);
+}
+);
+width = 1000;
+}
+);
+unicode = 2014;
+},
+{
+glyphname = figuredash;
+lastChange = "2026-08-26 00:00:00 +0000";
+layers = (
+{
+layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
+name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"60 314 LINE",
+"566 314 LINE",
+"566 418 LINE",
+"60 418 LINE"
+);
+}
+);
+width = 626;
+}
+);
+unicode = 2012;
+},
+{
+glyphname = horizontalbar;
+lastChange = "2026-08-26 00:00:00 +0000";
+layers = (
+{
+layerId = "4646E42D-B7EF-4922-8014-FEFC5A6E791A";
+name = Regular;
+paths = (
+{
+closed = 1;
+nodes = (
+"0 314 LINE",
+"1000 314 LINE",
+"1000 418 LINE",
+"0 418 LINE"
+);
+}
+);
+width = 1000;
+}
+);
+unicode = 2015;
+},
+{
 glyphname = space;
 lastChange = "2019-07-10 07:23:36 +0000";
 layers = (
@@ -3518,7 +3610,10 @@ comma = "-160";
 d = "-30";
 e = "-36";
 eight = "-62";
+emdash = "-80";
+endash = "-80";
 f = "-40";
+figuredash = "-80";
 five = "-108";
 four = "-124";
 g = "-80";
@@ -3652,7 +3747,10 @@ comma = "-34";
 d = "-10";
 e = "-16";
 eight = "-36";
+emdash = "-60";
+endash = "-60";
 f = "-6";
+figuredash = "-60";
 five = "-50";
 four = "-70";
 g = "-50";
@@ -4293,6 +4391,18 @@ y = "-64";
 z = "-50";
 zero = "-10";
 };
+emdash = {
+I = 10;
+M = 10;
+i = 10;
+m = 10;
+};
+endash = {
+I = 10;
+M = 10;
+i = 10;
+m = 10;
+};
 f = {
 A = "-115";
 B = 0;
@@ -4360,6 +4470,12 @@ x = "-20";
 y = "-38";
 z = "-20";
 zero = "-40";
+};
+figuredash = {
+I = 10;
+M = 10;
+i = 10;
+m = 10;
 };
 five = {
 A = "-30";
@@ -6120,7 +6236,10 @@ comma = "-160";
 d = "-30";
 e = "-36";
 eight = "-62";
+emdash = "-80";
+endash = "-80";
 f = "-40";
+figuredash = "-80";
 five = "-108";
 four = "-124";
 g = "-80";
@@ -6253,7 +6372,10 @@ comma = "-34";
 d = "-10";
 e = "-16";
 eight = "-36";
+emdash = "-60";
+endash = "-60";
 f = "-6";
+figuredash = "-60";
 five = "-50";
 four = "-70";
 g = "-50";
