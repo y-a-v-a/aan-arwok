@@ -53,11 +53,6 @@ white on gray: #f1f1f1 on #383838
 white on red: #e2e2e2 on #cd3838
 white on greenish: #e2e3e4 on #323b3f
 
-## Glyphs to add
-
-* ?
-* !
-
 ## Sentences with all alphabet characters
 
 Jack amazed a few girls by dropping the antique onyx vase!
