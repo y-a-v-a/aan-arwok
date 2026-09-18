@@ -56,6 +56,8 @@ def build(ttf_path=None):
     sys.path.insert(0, str(REPO / "tools"))
     from kawara_kerning import export_js
     export_js(REPO / "www" / "kerning.js")
+    from kawara_glyphs import export_js as export_glyphs_js
+    export_glyphs_js(REPO / "www" / "glyphdata.js")
 
 
 if __name__ == "__main__":

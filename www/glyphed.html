@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>On Kawara — glyph editor</title>
+<style>
+  :root {
+    --bg: #383838; --fg: #f1f1f1;
+    --panel: #1e1e1e; --panel-fg: #d5d5d5; --accent: #cd3838; --line: #4a4a4a;
+    --metric: #5a6a72; --handle: #7ec3e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; height: 100vh; display: flex; flex-direction: column;
+    background: var(--panel); color: var(--panel-fg);
+    font: 13px/1.45 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    display: flex; align-items: center; gap: 14px; padding: 8px 14px;
+    border-bottom: 1px solid var(--line); flex-wrap: wrap;
+  }
+  header h1 { font-size: 13px; letter-spacing: .12em; margin: 0; font-weight: 600; }
+  header a { color: var(--panel-fg); opacity: .7; }
+  header label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  select, input[type=text], input[type=number], button {
+    background: #2b2b2b; color: var(--panel-fg); border: 1px solid var(--line);
+    border-radius: 4px; padding: 4px 8px; font: inherit;
+  }
+  button { cursor: pointer; }
+  button:hover { border-color: #888; }
+  button.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
+  #status { font-size: 12px; opacity: .85; min-width: 130px; }
+  #mode-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid var(--line); }
+  main { flex: 1; display: flex; min-height: 0; }
+  #stage { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #canvas { flex: 1; display: block; background: var(--bg); cursor: default; touch-action: none; }
+  #canvas .metric { stroke: var(--metric); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  #canvas .metric.accent { stroke: var(--accent); }
+  #canvas text.mlabel { fill: var(--metric); font-size: 11px; }
+  #canvas .outline { fill: rgba(241,241,241,.14); stroke: #f1f1f1; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+  #canvas .outline.ghost { fill: rgba(241,241,241,.10); stroke: none; }
+  #canvas .handle-line { stroke: var(--handle); stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .7; }
+  #canvas .seg { fill: none; stroke: rgba(0,0,0,0); stroke-width: 12; vector-effect: non-scaling-stroke; pointer-events: stroke; cursor: copy; }
+  #canvas .seg:hover { stroke: rgba(126,195,224,.35); }
+  #canvas .node { cursor: grab; }
+  #canvas .node.on  { fill: #f1f1f1; stroke: #1e1e1e; stroke-width: 1; }
+  #canvas .node.off { fill: var(--bg); stroke: var(--handle); stroke-width: 1.5; }
+  #canvas .node.sel { fill: var(--accent); stroke: #fff; }
+  #inspector {
+    border-top: 1px solid var(--line); padding: 8px 14px;
+    display: flex; gap: 18px; align-items: center; flex-wrap: wrap; min-height: 46px;
+  }
+  #glyphname { font-size: 15px; font-weight: 600; min-width: 130px; }
+  #glyphname small { font-weight: 400; opacity: .7; }
+  #nodeinfo { font-family: ui-monospace, Menlo, monospace; font-size: 12px; opacity: .85; min-width: 170px; }
+  #widthval { width: 72px; text-align: right; }
+  #hint { opacity: .6; font-size: 12px; }
+  #previewbar { border-top: 1px solid var(--line); padding: 6px 14px; display: flex; gap: 10px; align-items: center; }
+  #previewtext { width: 260px; }
+  #preview { flex: 1; height: 96px; }
+  #preview path { fill: var(--fg); }
+  aside { width: 250px; border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+  aside input { margin: 8px; }
+  #glyphlist { flex: 1; overflow: auto; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  #glyphlist div { display: flex; justify-content: space-between; padding: 2px 12px; cursor: pointer; }
+  #glyphlist div:hover { background: #2b2b2b; }
+  #glyphlist div.cur { background: #3a2626; }
+  #glyphlist .w { opacity: .6; }
+  #glyphlist .comp { opacity: .55; font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ON KAWARA · GLYPHS</h1>
+  <span id="mode-pill">…</span>
+  <a href="kern.html">kerning →</a>
+  <label>width <input type="number" id="widthval" step="1"></label>
+  <button id="fit" title="fit the glyph in the view">fit</button>
+  <span style="flex:1"></span>
+  <span id="status"></span>
+  <button id="save" class="primary">Save</button>
+</header>
+<main>
+  <div id="stage">
+    <svg id="canvas"></svg>
+    <div id="inspector">
+      <span id="glyphname">—</span>
+      <span id="nodeinfo">click a point</span>
+      <span id="hint">drag points · 2×click outline: insert point · ⌥2×click line: curve it · ⌫ delete point/handles · arrows ±1 ⇧ ±10 · ⌘Z undo · wheel zoom · drag to pan</span>
+    </div>
+    <div id="previewbar">
+      <input type="text" id="previewtext" spellcheck="false" autocomplete="off">
+      <svg id="preview" preserveAspectRatio="xMinYMid meet"></svg>
+    </div>
+  </div>
+  <aside>
+    <input type="text" id="filter" placeholder="filter glyphs…">
+    <div id="glyphlist"></div>
+  </aside>
+</main>
+
+<script src="glyphdata.js"></script>
+<script src="kerning.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const canvas = $("#canvas"), status = $("#status");
+  let DATA = null, live = false;
+  let cur = null;          // current glyph name
+  let sel = null;          // {pi, ni} selected node
+  let dirty = false;
+  let undoStack = [], lastUndoPush = 0;
+  let view = { k: 0.5, tx: 200, ty: 550 };   // font -> screen: sx = x*k+tx, sy = -y*k+ty
+
+  // ---------- data ----------
+  const G = () => DATA.glyphs[cur];
+  const isEditable = () => G().paths.length > 0 || !G().components.length;
+  function resolvedPaths(name, seen) {
+    // outline paths with component references flattened (translate only)
+    const g = DATA.glyphs[name];
+    if (!g || (seen = seen || new Set()).has(name)) return [];
+    seen.add(name);
+    const out = g.paths.map(p => p.nodes);
+    for (const c of g.components) {
+      const [, , , , tx, ty] = c.transform;
+      for (const nodes of resolvedPaths(c.name, seen))
+        out.push(nodes.map(n => [n[0] + tx, n[1] + ty, n[2], n[3]]));
+    }
+    return out;
+  }
+  function pathD(nodes) {
+    const on = nodes.map((n, i) => n[2] !== "OFFCURVE" ? i : -1).filter(i => i >= 0);
+    if (!on.length) return "";
+    const st = on[on.length - 1];
+    let d = `M ${nodes[st][0]} ${nodes[st][1]}`, offs = [];
+    for (let s = 1; s <= nodes.length; s++) {
+      const n = nodes[(st + s) % nodes.length];
+      if (n[2] === "OFFCURVE") { offs.push(n); continue; }
+      if (n[2] === "CURVE" && offs.length === 2)
+        d += ` C ${offs[0][0]} ${offs[0][1]} ${offs[1][0]} ${offs[1][1]} ${n[0]} ${n[1]}`;
+      else d += ` L ${n[0]} ${n[1]}`;
+      offs = [];
+    }
+    return d + " Z";
+  }
+
+  // ---------- editor canvas ----------
+  const toScreen = (x, y) => [x * view.k + view.tx, -y * view.k + view.ty];
+  const toFont = (sx, sy) => [(sx - view.tx) / view.k, -(sy - view.ty) / view.k];
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || canvas).appendChild(e);
+    return e;
+  }
+  function anchorOf(nodes, ni) {
+    // the on-curve node an off-curve handle hangs off
+    const prev = nodes[(ni - 1 + nodes.length) % nodes.length];
+    return prev[2] !== "OFFCURVE" ? (ni - 1 + nodes.length) % nodes.length
+                                  : (ni + 1) % nodes.length;
+  }
+  function segIdx(nodes, si) {
+    // the segment ENDING at on-curve node si: its start node and off-curves
+    const n = nodes.length, p1 = (si - 1 + n) % n, p2 = (si - 2 + n) % n;
+    if (nodes[p1][2] === "OFFCURVE" && nodes[p2][2] === "OFFCURVE")
+      return { ai: (si - 3 + n) % n, offs: [p2, p1] };
+    return { ai: p1, offs: [] };
+  }
+  function render() {
+    canvas.innerHTML = "";
+    if (!cur) return;
+    const g = G(), M = DATA.metrics;
+    const wpx = canvas.clientWidth;
+    // metrics
+    for (const [y, label] of [[M.descender, "desc"], [0, "base"],
+                              [M.xHeight, "x"], [M.capHeight, "cap"], [M.ascender, "asc"]]) {
+      const [, sy] = toScreen(0, y);
+      el("line", { x1: 0, y1: sy, x2: wpx, y2: sy, class: "metric" });
+      const t = el("text", { x: 6, y: sy - 4, class: "mlabel" });
+      t.textContent = `${label} ${y}`;
+    }
+    for (const [x, cls] of [[0, "metric accent"], [g.width, "metric accent"]]) {
+      const [sx] = toScreen(x, 0);
+      el("line", { x1: sx, y1: 0, x2: sx, y2: canvas.clientHeight, class: cls });
+    }
+    // outline (components ghosted, own paths live)
+    const world = `matrix(${view.k},0,0,${-view.k},${view.tx},${view.ty})`;
+    const d = g.paths.map(p => pathD(p.nodes)).join(" ");
+    if (g.components.length) {
+      const gd = resolvedPaths(cur).map(pathD).join(" ");
+      el("path", { d: gd, class: "outline ghost", transform: world });
+    }
+    if (d) el("path", { d, class: "outline", transform: world });
+    // invisible fat strokes per segment, for insert-point double-clicks
+    if (isEditable()) g.paths.forEach((p, pi) => p.nodes.forEach((n, si) => {
+      if (n[2] === "OFFCURVE") return;
+      const s = segIdx(p.nodes, si), a = p.nodes[s.ai];
+      let sd = `M ${a[0]} ${a[1]}`;
+      sd += s.offs.length === 2
+        ? ` C ${p.nodes[s.offs[0]][0]} ${p.nodes[s.offs[0]][1]} ${p.nodes[s.offs[1]][0]} ${p.nodes[s.offs[1]][1]} ${n[0]} ${n[1]}`
+        : ` L ${n[0]} ${n[1]}`;
+      const e = el("path", { d: sd, class: "seg", transform: world });
+      e.dataset.pi = pi; e.dataset.si = si;
+    }));
+    // handles + nodes
+    g.paths.forEach((p, pi) => p.nodes.forEach((n, ni) => {
+      if (n[2] !== "OFFCURVE") return;
+      const a = p.nodes[anchorOf(p.nodes, ni)];
+      const [x1, y1] = toScreen(n[0], n[1]), [x2, y2] = toScreen(a[0], a[1]);
+      el("line", { x1, y1, x2, y2, class: "handle-line" });
+    }));
+    g.paths.forEach((p, pi) => p.nodes.forEach((n, ni) => {
+      const [sx, sy] = toScreen(n[0], n[1]);
+      const isSel = sel && sel.pi === pi && sel.ni === ni;
+      const cls = `node ${n[2] === "OFFCURVE" ? "off" : "on"}${isSel ? " sel" : ""}`;
+      const e = n[2] === "OFFCURVE"
+        ? el("circle", { cx: sx, cy: sy, r: 4.5, class: cls })
+        : el("rect", { x: sx - 4.5, y: sy - 4.5, width: 9, height: 9, class: cls });
+      e.dataset.pi = pi; e.dataset.ni = ni;
+    }));
+    updateInspector();
+  }
+  function updateInspector() {
+    const g = G();
+    $("#glyphname").innerHTML = g ? `${g.name} <small>${g.unicode ? "U+" + g.unicode : ""}${
+      g.components.length ? " · component of " + g.components.map(c => c.name).join("+") : ""}</small>` : "—";
+    $("#widthval").value = g ? g.width : "";
+    const ni = $("#nodeinfo");
+    if (sel && g.paths[sel.pi]) {
+      const n = g.paths[sel.pi].nodes[sel.ni];
+      ni.textContent = `${n[2]}${n[3] ? " SMOOTH" : ""}  (${n[0]}, ${n[1]})`;
+    } else ni.textContent = g && !g.paths.length ? "no outline — component or space" : "click a point";
+  }
+  function fit() {
+    const g = G();
+    if (!g) return;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    view.k = Math.min(w / (g.width + 500), h / 1300);
+    view.tx = (w - g.width * view.k) / 2;
+    view.ty = h / 2 + 300 * view.k;   // centre of [-200, 800] at mid-height
+    render();
+  }
+
+  // ---------- editing ----------
+  function pushUndo(force) {
+    if (!force && Date.now() - lastUndoPush < 400) return;
+    undoStack.push(JSON.stringify({ paths: G().paths, width: G().width }));
+    if (undoStack.length > 200) undoStack.shift();
+    lastUndoPush = Date.now();
+  }
+  function undo() {
+    if (!undoStack.length) return;
+    const snap = JSON.parse(undoStack.pop());
+    G().paths = snap.paths; G().width = snap.width;
+    markDirty(); render(); renderPreview();
+  }
+  function markDirty() {
+    dirty = true;
+    status.textContent = "● unsaved changes";
+  }
+  function moveNode(pi, ni, dx, dy) {
+    const nodes = G().paths[pi].nodes, n = nodes[ni];
+    if (n[2] !== "OFFCURVE") {
+      // an on-curve point drags its attached handles along
+      n[0] += dx; n[1] += dy;
+      for (const j of [(ni - 1 + nodes.length) % nodes.length, (ni + 1) % nodes.length]) {
+        if (nodes[j][2] === "OFFCURVE" && anchorOf(nodes, j) === ni) {
+          nodes[j][0] += dx; nodes[j][1] += dy;
+        }
+      }
+    } else {
+      n[0] += dx; n[1] += dy;
+      const ai = anchorOf(nodes, ni), a = nodes[ai];
+      if (a[3]) {  // smooth anchor: keep the opposite handle collinear
+        const oi = (ai === (ni + 1) % nodes.length)
+          ? (ai + 1) % nodes.length : (ai - 1 + nodes.length) % nodes.length;
+        const o = nodes[oi];
+        if (o[2] === "OFFCURVE" && oi !== ni) {
+          const vx = a[0] - n[0], vy = a[1] - n[1], len = Math.hypot(vx, vy) || 1;
+          const olen = Math.hypot(o[0] - a[0], o[1] - a[1]);
+          o[0] = Math.round(a[0] + vx / len * olen);
+          o[1] = Math.round(a[1] + vy / len * olen);
+        }
+      }
+    }
+    markDirty();
+  }
+
+  // ---------- topology: insert / convert / delete ----------
+  const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const rn = p => [Math.round(p[0]), Math.round(p[1])];
+  function rotateTo(nodes, ai) {
+    // make index ai the first node so segment edits are contiguous splices
+    nodes.push(...nodes.splice(0, ai));
+  }
+  function cubicAt(A, c1, c2, B, t) {
+    const u = 1 - t;
+    return [u*u*u*A[0] + 3*u*u*t*c1[0] + 3*u*t*t*c2[0] + t*t*t*B[0],
+            u*u*u*A[1] + 3*u*u*t*c1[1] + 3*u*t*t*c2[1] + t*t*t*B[1]];
+  }
+  function insertOnSegment(pi, si, fx, fy) {
+    const nodes = G().paths[pi].nodes, s = segIdx(nodes, si);
+    rotateTo(nodes, s.ai);
+    if (s.offs.length) {
+      // cubic: de Casteljau split at the t nearest the click — shape unchanged
+      const [A, c1, c2, B] = nodes.slice(0, 4);
+      let bt = 0.5, bd = Infinity;
+      for (let t = 0.02; t < 1; t += 0.02) {
+        const p = cubicAt(A, c1, c2, B, t);
+        const d2 = (p[0] - fx) ** 2 + (p[1] - fy) ** 2;
+        if (d2 < bd) { bd = d2; bt = t; }
+      }
+      const p01 = lerp(A, c1, bt), p12 = lerp(c1, c2, bt), p23 = lerp(c2, B, bt);
+      const p012 = lerp(p01, p12, bt), p123 = lerp(p12, p23, bt);
+      const P = lerp(p012, p123, bt);
+      nodes.splice(1, 2,
+        [...rn(p01), "OFFCURVE", false], [...rn(p012), "OFFCURVE", false],
+        [...rn(P), "CURVE", true],
+        [...rn(p123), "OFFCURVE", false], [...rn(p23), "OFFCURVE", false]);
+    } else {
+      // line: put the new point on the segment, where clicked
+      const [A, B] = nodes;
+      const abx = B[0] - A[0], aby = B[1] - A[1];
+      const t = Math.max(.05, Math.min(.95,
+        ((fx - A[0]) * abx + (fy - A[1]) * aby) / (abx * abx + aby * aby || 1)));
+      nodes.splice(1, 0, [...rn(lerp(A, B, t)), "LINE", false]);
+    }
+    sel = null; markDirty();
+  }
+  function lineToCurve(pi, si) {
+    const nodes = G().paths[pi].nodes, s = segIdx(nodes, si);
+    if (s.offs.length) return;   // already a curve
+    rotateTo(nodes, s.ai);
+    const [A, B] = nodes;
+    B[2] = "CURVE";
+    nodes.splice(1, 0,
+      [...rn(lerp(A, B, 1 / 3)), "OFFCURVE", false],
+      [...rn(lerp(A, B, 2 / 3)), "OFFCURVE", false]);
+    sel = null; markDirty();
+  }
+  function deleteSelected() {
+    if (!sel || !isEditable()) return;
+    const nodes = G().paths[sel.pi].nodes, node = nodes[sel.ni];
+    if (node[2] === "OFFCURVE") {
+      // drop both handles — the segment falls back to a straight line
+      pushUndo(true);
+      let bi = sel.ni;
+      while (nodes[bi][2] === "OFFCURVE") bi = (bi + 1) % nodes.length;
+      rotateTo(nodes, segIdx(nodes, bi).ai);
+      nodes.splice(1, 2);
+      nodes[1][2] = "LINE"; nodes[1][3] = false;
+    } else {
+      if (nodes.filter(n => n[2] !== "OFFCURVE").length <= 2) {
+        status.textContent = "not deleted — a contour needs 3+ on-curve points";
+        return;
+      }
+      pushUndo(true);
+      const s = segIdx(nodes, sel.ni);
+      rotateTo(nodes, s.ai);
+      nodes.splice(1, s.offs.length + 1);      // incoming handles + the point
+      if (nodes[1][2] === "OFFCURVE") {        // outgoing handles too
+        nodes.splice(1, 2);
+        nodes[1][2] = "LINE"; nodes[1][3] = false;
+      }
+    }
+    sel = null; markDirty();
+  }
+
+  let drag = null;   // {pi, ni, fx, fy} or {pan: true, sx, sy, tx, ty}
+  canvas.addEventListener("pointerdown", e => {
+    const t = e.target;
+    if (t.dataset && t.dataset.ni !== undefined && isEditable()) {
+      sel = { pi: +t.dataset.pi, ni: +t.dataset.ni };
+      const [fx, fy] = toFont(e.offsetX, e.offsetY);
+      drag = { pi: sel.pi, ni: sel.ni, fx, fy };
+      pushUndo(true);
+      render();
+    } else {
+      drag = { pan: true, sx: e.offsetX, sy: e.offsetY, tx: view.tx, ty: view.ty };
+    }
+    canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener("pointermove", e => {
+    if (!drag) return;
+    if (drag.pan) {
+      view.tx = drag.tx + e.offsetX - drag.sx;
+      view.ty = drag.ty + e.offsetY - drag.sy;
+      render();
+      return;
+    }
+    const [fx, fy] = toFont(e.offsetX, e.offsetY);
+    const dx = Math.round(fx - drag.fx), dy = Math.round(fy - drag.fy);
+    if (!dx && !dy) return;
+    moveNode(drag.pi, drag.ni, dx, dy);
+    drag.fx += dx; drag.fy += dy;
+    render(); renderPreview();
+  });
+  canvas.addEventListener("pointerup", () => { drag = null; });
+  canvas.addEventListener("dblclick", e => {
+    const t = e.target;
+    if (!t.dataset || t.dataset.si === undefined || !isEditable()) return;
+    pushUndo(true);
+    const [fx, fy] = toFont(e.offsetX, e.offsetY);
+    if (e.altKey) lineToCurve(+t.dataset.pi, +t.dataset.si);
+    else insertOnSegment(+t.dataset.pi, +t.dataset.si, fx, fy);
+    render(); renderPreview();
+  });
+  canvas.addEventListener("wheel", e => {
+    e.preventDefault();
+    const f = Math.exp(-e.deltaY * 0.002);
+    const [fx, fy] = toFont(e.offsetX, e.offsetY);
+    view.k *= f;
+    view.tx = e.offsetX - fx * view.k;
+    view.ty = e.offsetY + fy * view.k;
+    render();
+  }, { passive: false });
+
+  document.addEventListener("keydown", e => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") { undo(); e.preventDefault(); return; }
+    if (!sel || !isEditable()) return;
+    if (e.key === "Backspace" || e.key === "Delete") {
+      deleteSelected(); render(); renderPreview();
+      e.preventDefault(); return;
+    }
+    const step = e.shiftKey ? 10 : 1;
+    const dir = { ArrowLeft: [-step, 0], ArrowRight: [step, 0],
+                  ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
+    if (!dir) return;
+    pushUndo();
+    moveNode(sel.pi, sel.ni, dir[0], dir[1]);
+    render(); renderPreview();
+    e.preventDefault();
+  });
+
+  $("#widthval").addEventListener("change", e => {
+    const v = parseInt(e.target.value, 10);
+    if (isNaN(v) || v < 0 || !cur) return;
+    pushUndo(true);
+    G().width = v;
+    markDirty(); render(); renderPreview();
+  });
+  $("#fit").addEventListener("click", fit);
+
+  // ---------- preview strip ----------
+  const charToGlyph = {};
+  function renderPreview() {
+    const svg = $("#preview");
+    svg.innerHTML = "";
+    const kern = window.KAWARA ? window.KAWARA.kerning : {};
+    let x = 0, prev = null;
+    const frag = document.createDocumentFragment();
+    for (const ch of $("#previewtext").value) {
+      const name = charToGlyph[ch];
+      if (!name) { prev = null; x += 299; continue; }
+      if (prev && kern[prev] && kern[prev][name] !== undefined) x += kern[prev][name];
+      const d = resolvedPaths(name).map(pathD).join(" ");
+      if (d) {
+        const p = document.createElementNS(SVGNS, "path");
+        p.setAttribute("d", d);
+        p.setAttribute("transform", `translate(${x},0) scale(1,-1)`);
+        frag.appendChild(p);
+      }
+      x += DATA.glyphs[name].width;
+      prev = name;
+    }
+    svg.setAttribute("viewBox", `-40 -780 ${Math.max(x + 80, 400)} 1060`);
+    svg.appendChild(frag);
+  }
+  $("#previewtext").addEventListener("input", () => {
+    localStorage.kawaraGlyphSample = $("#previewtext").value;
+    renderPreview();
+  });
+
+  // ---------- glyph list ----------
+  function renderList() {
+    const q = $("#filter").value.trim().toLowerCase();
+    const list = $("#glyphlist");
+    list.innerHTML = "";
+    for (const name of DATA.order) {
+      const g = DATA.glyphs[name];
+      const ch = DATA.glyphToChar[name] || "";
+      if (q && !name.toLowerCase().includes(q) && ch.toLowerCase() !== q) continue;
+      const row = document.createElement("div");
+      if (name === cur) row.classList.add("cur");
+      const tag = g.components.length ? `<span class="comp">→ ${g.components.map(c => c.name).join("+")}</span>`
+                                      : `<span class="w">${g.width}</span>`;
+      row.innerHTML = `<span>${ch ? ch + "  " : ""}${name}</span>${tag}`;
+      row.onclick = () => selectGlyph(name);
+      list.appendChild(row);
+    }
+  }
+  $("#filter").addEventListener("input", renderList);
+  function selectGlyph(name) {
+    if (dirty && !confirm("Discard unsaved changes to " + cur + "?")) return;
+    cur = name; sel = null; dirty = false; undoStack = [];
+    status.textContent = "";
+    renderList(); fit(); renderPreview();
+  }
+
+  // ---------- save ----------
+  async function save() {
+    if (!cur) return;
+    const g = G();
+    const body = { name: cur, width: g.width };
+    if (g.paths.length) body.paths = g.paths;
+    if (live) {
+      status.textContent = "saving + rebuilding…";
+      try {
+        const res = await fetch("/api/glyph", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const out = await res.json();
+        if (!res.ok) throw new Error(out.error || res.status);
+        dirty = false;
+        status.textContent = `saved ${cur} · font rebuilt`;
+      } catch (err) {
+        status.textContent = "save failed: " + err.message;
+      }
+    } else {
+      const blob = new Blob([JSON.stringify(body, null, 1)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `glyph-${cur}.json`;
+      a.click();
+      dirty = false;
+      status.textContent = `downloaded — run: make apply-glyph FILE=glyph-${cur}.json`;
+    }
+  }
+  $("#save").addEventListener("click", save);
+  window.addEventListener("beforeunload", e => { if (dirty) e.preventDefault(); });
+
+  // ---------- init ----------
+  async function init() {
+    try {
+      const res = await fetch("/api/glyphs");
+      if (!res.ok) throw new Error();
+      DATA = await res.json();
+      live = true;
+    } catch {
+      DATA = window.KAWARA_GLYPHS || null;
+      live = false;
+    }
+    $("#mode-pill").textContent = live ? "live · saves to kawara2.glyphs" : "static · Save downloads JSON";
+    if (!DATA) {
+      document.body.innerHTML = "<p style='padding:2em'>glyphdata.js missing — run <code>make build</code> first.</p>";
+      return;
+    }
+    for (const [g, c] of Object.entries(DATA.glyphToChar)) charToGlyph[c] = g;
+    $("#previewtext").value = localStorage.kawaraGlyphSample || "HOW? NO! 1966";
+    const want = new URLSearchParams(location.search).get("g");
+    cur = (want && DATA.glyphs[want]) ? want
+        : DATA.order.find(n => DATA.glyphs[n].paths.length) || DATA.order[0];
+    renderList(); fit(); renderPreview();
+    new ResizeObserver(() => { render(); }).observe(canvas);
+  }
+  init();
+})();
+</script>
+</body>
+</html>
