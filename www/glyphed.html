@@ -29,6 +29,7 @@
   }
   button { cursor: pointer; }
   button:hover { border-color: #888; }
+  button:disabled { opacity: .4; cursor: default; border-color: var(--line); }
   button.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
   #status { font-size: 12px; opacity: .85; min-width: 130px; }
   #mode-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid var(--line); }
@@ -79,6 +80,7 @@
   <button id="fit" title="fit the glyph in the view">fit</button>
   <span style="flex:1"></span>
   <span id="status"></span>
+  <button id="revert" title="discard changes since the last save (⌘Z brings them back)" disabled>Revert</button>
   <button id="save" class="primary">Save</button>
 </header>
 <main>
@@ -264,14 +266,26 @@
     if (sel && !(G().paths[sel.pi] && G().paths[sel.pi].nodes[sel.ni])) sel = null;
     markDirty(); render(); renderPreview();
   }
+  function revert() {
+    // back to the last saved state; undoable, so no confirm needed
+    if (!dirty) return;
+    pushUndo(true);
+    const snap = JSON.parse(savedState);
+    G().paths = snap.paths; G().width = snap.width;
+    sel = null;
+    markDirty(); render(); renderPreview();
+    status.textContent = "reverted · ⌘Z to restore edits";
+  }
   function markClean() {
     savedState = snapshot();
     dirty = false;
+    $("#revert").disabled = true;
   }
   function markDirty() {
     // undoing back to the saved state makes the glyph clean again
     dirty = snapshot() !== savedState;
     status.textContent = dirty ? "● unsaved changes" : "";
+    $("#revert").disabled = !dirty;
   }
   function moveNode(pi, ni, dx, dy) {
     const nodes = G().paths[pi].nodes, n = nodes[ni];
@@ -594,6 +608,7 @@
     }
   }
   $("#save").addEventListener("click", save);
+  $("#revert").addEventListener("click", revert);
   window.addEventListener("beforeunload", e => { if (dirty) e.preventDefault(); });
 
   // ---------- init ----------
