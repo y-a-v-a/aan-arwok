@@ -110,7 +110,7 @@
   let DATA = null, live = false;
   let cur = null;          // current glyph name
   let sel = null;          // {pi, ni} selected node
-  let dirty = false;
+  let dirty = false, savedState = "";
   let undoStack = [], lastUndoPush = 0;
   let view = { k: 0.5, tx: 200, ty: 550 };   // font -> screen: sx = x*k+tx, sy = -y*k+ty
 
@@ -149,6 +149,12 @@
   // ---------- editor canvas ----------
   const toScreen = (x, y) => [x * view.k + view.tx, -y * view.k + view.ty];
   const toFont = (sx, sy) => [(sx - view.tx) / view.k, -(sy - view.ty) / view.k];
+  function canvasXY(e) {
+    // offsetX is relative to the event target, which for a node or segment
+    // is an SVG child — always measure against the canvas itself
+    const r = canvas.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
   function el(tag, attrs, parent) {
     const e = document.createElementNS(SVGNS, tag);
     for (const k in attrs) e.setAttribute(k, attrs[k]);
@@ -228,8 +234,8 @@
       g.components.length ? " · component of " + g.components.map(c => c.name).join("+") : ""}</small>` : "—";
     $("#widthval").value = g ? g.width : "";
     const ni = $("#nodeinfo");
-    if (sel && g.paths[sel.pi]) {
-      const n = g.paths[sel.pi].nodes[sel.ni];
+    const n = sel && g.paths[sel.pi] && g.paths[sel.pi].nodes[sel.ni];
+    if (n) {
       ni.textContent = `${n[2]}${n[3] ? " SMOOTH" : ""}  (${n[0]}, ${n[1]})`;
     } else ni.textContent = g && !g.paths.length ? "no outline — component or space" : "click a point";
   }
@@ -244,9 +250,10 @@
   }
 
   // ---------- editing ----------
+  const snapshot = () => JSON.stringify({ paths: G().paths, width: G().width });
   function pushUndo(force) {
     if (!force && Date.now() - lastUndoPush < 400) return;
-    undoStack.push(JSON.stringify({ paths: G().paths, width: G().width }));
+    undoStack.push(snapshot());
     if (undoStack.length > 200) undoStack.shift();
     lastUndoPush = Date.now();
   }
@@ -254,11 +261,17 @@
     if (!undoStack.length) return;
     const snap = JSON.parse(undoStack.pop());
     G().paths = snap.paths; G().width = snap.width;
+    if (sel && !(G().paths[sel.pi] && G().paths[sel.pi].nodes[sel.ni])) sel = null;
     markDirty(); render(); renderPreview();
   }
+  function markClean() {
+    savedState = snapshot();
+    dirty = false;
+  }
   function markDirty() {
-    dirty = true;
-    status.textContent = "● unsaved changes";
+    // undoing back to the saved state makes the glyph clean again
+    dirty = snapshot() !== savedState;
+    status.textContent = dirty ? "● unsaved changes" : "";
   }
   function moveNode(pi, ni, dx, dy) {
     const nodes = G().paths[pi].nodes, n = nodes[ni];
@@ -277,7 +290,14 @@
         const oi = (ai === (ni + 1) % nodes.length)
           ? (ai + 1) % nodes.length : (ai - 1 + nodes.length) % nodes.length;
         const o = nodes[oi];
-        if (o[2] === "OFFCURVE" && oi !== ni) {
+        if (o[2] !== "OFFCURVE") {
+          // the other side is a straight line: the handle may only slide
+          // along that line's direction, or the "smooth" point gets a kink
+          const vx = a[0] - o[0], vy = a[1] - o[1], len = Math.hypot(vx, vy) || 1;
+          const t = Math.max(0, ((n[0] - a[0]) * vx + (n[1] - a[1]) * vy) / len);
+          n[0] = Math.round(a[0] + vx / len * t);
+          n[1] = Math.round(a[1] + vy / len * t);
+        } else if (oi !== ni) {
           const vx = a[0] - n[0], vy = a[1] - n[1], len = Math.hypot(vx, vy) || 1;
           const olen = Math.hypot(o[0] - a[0], o[1] - a[1]);
           o[0] = Math.round(a[0] + vx / len * olen);
@@ -291,53 +311,69 @@
   // ---------- topology: insert / convert / delete ----------
   const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
   const rn = p => [Math.round(p[0]), Math.round(p[1])];
-  function rotateTo(nodes, ai) {
-    // make index ai the first node so segment edits are contiguous splices
+  function editFrom(nodes, ai, fn) {
+    // Run fn with index ai rotated to the front, so segment edits are
+    // contiguous splices, then rotate back: the last node is the contour's
+    // start point in .glyphs files, and it must not move (start point,
+    // direction and git diffs all depend on it).
+    const before = nodes.slice();
     nodes.push(...nodes.splice(0, ai));
+    fn(nodes);
+    let k = nodes.indexOf(before[before.length - 1]);
+    for (let i = before.length - 1; k < 0 && i >= 0; i--)   // start was deleted:
+      if (before[i][2] !== "OFFCURVE") k = nodes.indexOf(before[i]);   // previous on-curve
+    if (k >= 0) nodes.push(...nodes.splice(0, k + 1));
   }
   function cubicAt(A, c1, c2, B, t) {
     const u = 1 - t;
     return [u*u*u*A[0] + 3*u*u*t*c1[0] + 3*u*t*t*c2[0] + t*t*t*B[0],
             u*u*u*A[1] + 3*u*u*t*c1[1] + 3*u*t*t*c2[1] + t*t*t*B[1]];
   }
+  function nearestT(A, c1, c2, B, fx, fy) {
+    // coarse scan, then narrow around the best sample
+    const dist = t => { const p = cubicAt(A, c1, c2, B, t); return (p[0] - fx) ** 2 + (p[1] - fy) ** 2; };
+    let bt = 0.5, bd = Infinity;
+    for (let t = 0.02; t < 1; t += 0.02) { const d = dist(t); if (d < bd) { bd = d; bt = t; } }
+    for (let step = 0.01; step > 1e-4; step /= 2)
+      for (const t of [bt - step, bt + step])
+        if (t > 0 && t < 1) { const d = dist(t); if (d < bd) { bd = d; bt = t; } }
+    return bt;
+  }
   function insertOnSegment(pi, si, fx, fy) {
     const nodes = G().paths[pi].nodes, s = segIdx(nodes, si);
-    rotateTo(nodes, s.ai);
-    if (s.offs.length) {
-      // cubic: de Casteljau split at the t nearest the click — shape unchanged
-      const [A, c1, c2, B] = nodes.slice(0, 4);
-      let bt = 0.5, bd = Infinity;
-      for (let t = 0.02; t < 1; t += 0.02) {
-        const p = cubicAt(A, c1, c2, B, t);
-        const d2 = (p[0] - fx) ** 2 + (p[1] - fy) ** 2;
-        if (d2 < bd) { bd = d2; bt = t; }
+    editFrom(nodes, s.ai, nodes => {
+      if (s.offs.length) {
+        // cubic: de Casteljau split at the t nearest the click — shape unchanged
+        const [A, c1, c2, B] = nodes.slice(0, 4);
+        const t = nearestT(A, c1, c2, B, fx, fy);
+        const p01 = lerp(A, c1, t), p12 = lerp(c1, c2, t), p23 = lerp(c2, B, t);
+        const p012 = lerp(p01, p12, t), p123 = lerp(p12, p23, t);
+        const P = lerp(p012, p123, t);
+        nodes.splice(1, 2,
+          [...rn(p01), "OFFCURVE", false], [...rn(p012), "OFFCURVE", false],
+          [...rn(P), "CURVE", true],
+          [...rn(p123), "OFFCURVE", false], [...rn(p23), "OFFCURVE", false]);
+      } else {
+        // line: put the new point on the segment, where clicked
+        const [A, B] = nodes;
+        const abx = B[0] - A[0], aby = B[1] - A[1];
+        const t = Math.max(.05, Math.min(.95,
+          ((fx - A[0]) * abx + (fy - A[1]) * aby) / (abx * abx + aby * aby || 1)));
+        nodes.splice(1, 0, [...rn(lerp(A, B, t)), "LINE", false]);
       }
-      const p01 = lerp(A, c1, bt), p12 = lerp(c1, c2, bt), p23 = lerp(c2, B, bt);
-      const p012 = lerp(p01, p12, bt), p123 = lerp(p12, p23, bt);
-      const P = lerp(p012, p123, bt);
-      nodes.splice(1, 2,
-        [...rn(p01), "OFFCURVE", false], [...rn(p012), "OFFCURVE", false],
-        [...rn(P), "CURVE", true],
-        [...rn(p123), "OFFCURVE", false], [...rn(p23), "OFFCURVE", false]);
-    } else {
-      // line: put the new point on the segment, where clicked
-      const [A, B] = nodes;
-      const abx = B[0] - A[0], aby = B[1] - A[1];
-      const t = Math.max(.05, Math.min(.95,
-        ((fx - A[0]) * abx + (fy - A[1]) * aby) / (abx * abx + aby * aby || 1)));
-      nodes.splice(1, 0, [...rn(lerp(A, B, t)), "LINE", false]);
-    }
+    });
     sel = null; markDirty();
   }
   function lineToCurve(pi, si) {
     const nodes = G().paths[pi].nodes, s = segIdx(nodes, si);
     if (s.offs.length) return;   // already a curve
-    rotateTo(nodes, s.ai);
-    const [A, B] = nodes;
-    B[2] = "CURVE";
-    nodes.splice(1, 0,
-      [...rn(lerp(A, B, 1 / 3)), "OFFCURVE", false],
-      [...rn(lerp(A, B, 2 / 3)), "OFFCURVE", false]);
+    editFrom(nodes, s.ai, nodes => {
+      const [A, B] = nodes;
+      B[2] = "CURVE";
+      nodes.splice(1, 0,
+        [...rn(lerp(A, B, 1 / 3)), "OFFCURVE", false],
+        [...rn(lerp(A, B, 2 / 3)), "OFFCURVE", false]);
+    });
     sel = null; markDirty();
   }
   function deleteSelected() {
@@ -348,22 +384,45 @@
       pushUndo(true);
       let bi = sel.ni;
       while (nodes[bi][2] === "OFFCURVE") bi = (bi + 1) % nodes.length;
-      rotateTo(nodes, segIdx(nodes, bi).ai);
-      nodes.splice(1, 2);
-      nodes[1][2] = "LINE"; nodes[1][3] = false;
+      editFrom(nodes, segIdx(nodes, bi).ai, nodes => {
+        nodes.splice(1, 2);
+        nodes[1][2] = "LINE"; nodes[1][3] = false;
+      });
     } else {
-      if (nodes.filter(n => n[2] !== "OFFCURVE").length <= 2) {
+      if (nodes.filter(n => n[2] !== "OFFCURVE").length <= 3) {
         status.textContent = "not deleted — a contour needs 3+ on-curve points";
         return;
       }
       pushUndo(true);
       const s = segIdx(nodes, sel.ni);
-      rotateTo(nodes, s.ai);
-      nodes.splice(1, s.offs.length + 1);      // incoming handles + the point
-      if (nodes[1][2] === "OFFCURVE") {        // outgoing handles too
-        nodes.splice(1, 2);
-        nodes[1][2] = "LINE"; nodes[1][3] = false;
-      }
+      // A [a1 p1] P [p2 c2] C  ->  A [a1 c2] C: the two segments merge into
+      // one, keeping the outer handles so curves stay curves
+      editFrom(nodes, s.ai, nodes => {
+        const pIdx = s.offs.length + 1;
+        const outCurve = nodes[pIdx + 1][2] === "OFFCURVE";
+        const cIdx = pIdx + (outCurve ? 3 : 1);
+        const A = nodes[0], C = nodes[cIdx];
+        const h1 = s.offs.length ? nodes[1] : null, h2 = outCurve ? nodes[cIdx - 1] : null;
+        const P = nodes[pIdx], pin = nodes[pIdx - 1], pout = nodes[pIdx + 1];
+        nodes.splice(1, cIdx - 1);
+        if (h1 && h2) {
+          // undo a de Casteljau split: the outer handles were shortened by
+          // t and 1-t, and P divides its own two handles in that same ratio
+          const t = Math.hypot(P[0] - pin[0], P[1] - pin[1]) /
+                    (Math.hypot(pout[0] - pin[0], pout[1] - pin[1]) || 1);
+          if (t > 0.05 && t < 0.95) {
+            h1[0] = Math.round(A[0] + (h1[0] - A[0]) / t);
+            h1[1] = Math.round(A[1] + (h1[1] - A[1]) / t);
+            h2[0] = Math.round(C[0] + (h2[0] - C[0]) / (1 - t));
+            h2[1] = Math.round(C[1] + (h2[1] - C[1]) / (1 - t));
+          }
+        }
+        if (h1 || h2) {
+          nodes.splice(1, 0, h1 || [...rn(lerp(A, C, 1 / 3)), "OFFCURVE", false],
+                             h2 || [...rn(lerp(A, C, 2 / 3)), "OFFCURVE", false]);
+          C[2] = "CURVE";
+        }
+      });
     }
     sel = null; markDirty();
   }
@@ -371,28 +430,32 @@
   let drag = null;   // {pi, ni, fx, fy} or {pan: true, sx, sy, tx, ty}
   canvas.addEventListener("pointerdown", e => {
     const t = e.target;
+    const [sx, sy] = canvasXY(e);
     if (t.dataset && t.dataset.ni !== undefined && isEditable()) {
       sel = { pi: +t.dataset.pi, ni: +t.dataset.ni };
-      const [fx, fy] = toFont(e.offsetX, e.offsetY);
-      drag = { pi: sel.pi, ni: sel.ni, fx, fy };
-      pushUndo(true);
+      const [fx, fy] = toFont(sx, sy);
+      drag = { pi: sel.pi, ni: sel.ni, fx, fy, moved: false };
       render();
     } else {
-      drag = { pan: true, sx: e.offsetX, sy: e.offsetY, tx: view.tx, ty: view.ty };
+      drag = { pan: true, sx, sy, tx: view.tx, ty: view.ty };
     }
-    canvas.setPointerCapture(e.pointerId);
   });
   canvas.addEventListener("pointermove", e => {
     if (!drag) return;
+    // capture only once the pointer moves: capturing on pointerdown makes
+    // Chrome swallow the click/dblclick that inserts points
+    if (!canvas.hasPointerCapture(e.pointerId)) canvas.setPointerCapture(e.pointerId);
+    const [sx, sy] = canvasXY(e);
     if (drag.pan) {
-      view.tx = drag.tx + e.offsetX - drag.sx;
-      view.ty = drag.ty + e.offsetY - drag.sy;
+      view.tx = drag.tx + sx - drag.sx;
+      view.ty = drag.ty + sy - drag.sy;
       render();
       return;
     }
-    const [fx, fy] = toFont(e.offsetX, e.offsetY);
+    const [fx, fy] = toFont(sx, sy);
     const dx = Math.round(fx - drag.fx), dy = Math.round(fy - drag.fy);
     if (!dx && !dy) return;
+    if (!drag.moved) { pushUndo(true); drag.moved = true; }   // a plain click is not an edit
     moveNode(drag.pi, drag.ni, dx, dy);
     drag.fx += dx; drag.fy += dy;
     render(); renderPreview();
@@ -402,18 +465,18 @@
     const t = e.target;
     if (!t.dataset || t.dataset.si === undefined || !isEditable()) return;
     pushUndo(true);
-    const [fx, fy] = toFont(e.offsetX, e.offsetY);
+    const [fx, fy] = toFont(...canvasXY(e));
     if (e.altKey) lineToCurve(+t.dataset.pi, +t.dataset.si);
     else insertOnSegment(+t.dataset.pi, +t.dataset.si, fx, fy);
     render(); renderPreview();
   });
   canvas.addEventListener("wheel", e => {
     e.preventDefault();
-    const f = Math.exp(-e.deltaY * 0.002);
-    const [fx, fy] = toFont(e.offsetX, e.offsetY);
-    view.k *= f;
-    view.tx = e.offsetX - fx * view.k;
-    view.ty = e.offsetY + fy * view.k;
+    const [sx, sy] = canvasXY(e);
+    const [fx, fy] = toFont(sx, sy);
+    view.k = Math.min(20, Math.max(0.02, view.k * Math.exp(-e.deltaY * 0.002)));
+    view.tx = sx - fx * view.k;
+    view.ty = sy + fy * view.k;
     render();
   }, { passive: false });
 
@@ -495,8 +558,8 @@
   $("#filter").addEventListener("input", renderList);
   function selectGlyph(name) {
     if (dirty && !confirm("Discard unsaved changes to " + cur + "?")) return;
-    cur = name; sel = null; dirty = false; undoStack = [];
-    status.textContent = "";
+    cur = name; sel = null; undoStack = [];
+    markClean(); status.textContent = "";
     renderList(); fit(); renderPreview();
   }
 
@@ -515,7 +578,7 @@
         });
         const out = await res.json();
         if (!res.ok) throw new Error(out.error || res.status);
-        dirty = false;
+        markClean();
         status.textContent = `saved ${cur} · font rebuilt`;
       } catch (err) {
         status.textContent = "save failed: " + err.message;
@@ -526,7 +589,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = `glyph-${cur}.json`;
       a.click();
-      dirty = false;
+      markClean();
       status.textContent = `downloaded — run: make apply-glyph FILE=glyph-${cur}.json`;
     }
   }
@@ -554,6 +617,7 @@
     const want = new URLSearchParams(location.search).get("g");
     cur = (want && DATA.glyphs[want]) ? want
         : DATA.order.find(n => DATA.glyphs[n].paths.length) || DATA.order[0];
+    markClean();
     renderList(); fit(); renderPreview();
     new ResizeObserver(() => { render(); }).observe(canvas);
   }
