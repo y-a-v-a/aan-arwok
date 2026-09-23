@@ -64,7 +64,7 @@ class Handler(SimpleHTTPRequestHandler):
                 pairs = kawara_kerning.write_kerning(kerning)
                 build_mod.build()
                 return self._json(200, {"ok": True, "pairs": pairs})
-            if self.path.startswith("/api/glyph"):
+            if self.path.split("?")[0] == "/api/glyph":   # not /api/glyphs
                 glyph = kawara_glyphs.write_glyph(
                     payload["name"], width=payload.get("width"),
                     paths=payload.get("paths"))
