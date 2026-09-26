@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>On Kawara font</title>
   <style>
     @font-face {
@@ -9,9 +10,9 @@
       src: url("OnKawara-Regular.otf") format("opentype");
     }
     body {
-      width: 100vw;
+      /* no default margin: with a 100vh body it adds scrollbars */
+      margin: 0;
       height: 100vh;
-      padding: 0;
       background-color: #383838;
       /*background-color: #cd3313;*/
       -webkit-font-smoothing: antialiased;
@@ -40,10 +41,10 @@
 <body>
   <div class="canvas">
     <div>
-    <!-- <h1>APR.29,2019</h1> -->
-    <h1 contenteditable>OKT.17,2017</h1>
-    <!-- <h1>JAN.18,1976</h1> -->
-  </div>
+      <!-- <h1>APR.29,2019</h1> -->
+      <h1 contenteditable>OKT.17,2017</h1>
+      <!-- <h1>JAN.18,1976</h1> -->
+    </div>
   </div>
 </body>
 </html>
