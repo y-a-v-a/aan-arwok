@@ -47,6 +47,9 @@ jobs:
       - name: Install build toolchain
         run: pip install -r requirements.txt brotli
 
+      - name: Test the tools
+        run: python -m unittest discover -s tests -t tests
+
       - name: Build font from source
         run: python tools/build.py --ttf "OnKawara-Regular-${{ inputs.version }}.ttf"
 

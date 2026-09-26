@@ -20,9 +20,13 @@ One-time setup (needs Python 3):
     make setup
 
 Compile `kawara2.glyphs` to `OnKawara-Regular.otf` (repo root + `www/`), including
-all kerning as a GPOS table, and refresh `www/kerning.js`:
+all kerning as a GPOS table, and refresh the generated `www/kerning.js` and
+`www/glyphdata.js` that the browser tools read:
 
     make build
+
+A rebuild without source changes still touches both OTFs (they embed a build
+date); `git checkout -- OnKawara-Regular.otf www/OnKawara-Regular.otf` drops that.
 
 ## Kerning workbench
 
@@ -48,8 +52,39 @@ Check for pairs whose case combinations disagree:
 
     make audit
 
-Run the tests for the tools and the workbench server (they work on temporary
-copies and never write to `kawara2.glyphs`):
+List every pair that has no kerning yet, grouped by left-hand glyph, in
+[KERNING_CHECK.md](KERNING_CHECK.md):
+
+    make gaps
+
+## Glyph editor
+
+The same server hosts a small outline editor at <http://localhost:8765/glyphed.html>
+(`make kern` starts it; the header links both pages). Pick a glyph from the list,
+drag points, double-click an outline to insert a point, ⌥-double-click a straight
+segment to turn it into a curve, ⌫ to delete a point or a pair of handles, and
+arrow keys to nudge (⇧ ×10). ⌘Z undoes, **Revert** returns to the last save.
+The strip at the bottom sets a sample text with the current kerning.
+**Save** writes the glyph's outline and width into `kawara2.glyphs` and rebuilds
+the OTF. Component glyphs (the lowercase copies of the capitals) are shown
+ghosted and edited through their capital.
+
+Without the server, **Save** downloads a `glyph-NAME.json`; apply it with:
+
+    make apply-glyph FILE=glyph-NAME.json
+
+## Development
+
+- `tools/` — the build script, the kerning and outline read/write modules
+  (they edit `kawara2.glyphs` as text, so unrelated bytes never change) and
+  the local server
+- `www/` — the specimen pages (`index.html`, `text.html`), the kerning
+  workbench and the glyph editor; `kerning.js` and `glyphdata.js` are generated
+- `tests/` — unit tests for the tools and end-to-end tests that drive the
+  server over HTTP; they work on temporary copies and never write to
+  `kawara2.glyphs`. The release workflow runs them before building.
+
+Run the tests:
 
     make test
 
