@@ -9,6 +9,7 @@ CLI:
     python3 tools/kawara_kerning.py export [-o www/kerning.js]
     python3 tools/kawara_kerning.py apply kerning.json
     python3 tools/kawara_kerning.py audit
+    python3 tools/kawara_kerning.py gaps [-o KERNING_CHECK.md]
 """
 
 import argparse
@@ -35,6 +36,10 @@ GLYPH_TO_CHAR = {
     "horizontalbar": "―",
     "space": " ",
 }
+
+# a glyph name as it appears unquoted in the .glyphs plist (a.alt, uni00A0,
+# @MMK_L_A group keys, ...)
+NAME = r"[A-Za-z0-9._@-]+"
 
 
 def find_kerning_block(text):
@@ -75,8 +80,8 @@ def read_kerning(path=GLYPHS_FILE):
     left = None
     for line in block[master_m.end():].splitlines():
         line = line.strip()
-        pair_m = re.match(r'^([A-Za-z]+) = \{$', line)
-        val_m = re.match(r'^([A-Za-z]+) = "?(-?\d+)"?;$', line)
+        pair_m = re.match(rf'^({NAME}) = \{{$', line)
+        val_m = re.match(rf'^({NAME}) = "?(-?\d+)"?;$', line)
         if pair_m:
             left = pair_m.group(1)
             kerning[left] = {}
@@ -106,9 +111,9 @@ def serialize_kerning(master_id, kerning):
 def write_kerning(kerning, path=GLYPHS_FILE):
     """Replace the kerning block in the .glyphs file, leaving all other
     bytes untouched. Returns the number of pairs written."""
+    master_id, _ = read_kerning(path)
     text = path.read_text()
     start, end = find_kerning_block(text)
-    master_id, _ = read_kerning(path)
     clean = {l: {r: int(v) for r, v in rs.items()} for l, rs in kerning.items() if rs}
     path.write_text(text[:start] + serialize_kerning(master_id, clean) + text[end:])
     return sum(len(rs) for rs in clean.values())
@@ -119,6 +124,13 @@ def glyph_widths():
     import glyphsLib
     font = glyphsLib.GSFont(str(GLYPHS_FILE))
     return {g.name: int(g.layers[0].width) for g in font.glyphs}
+
+
+def unknown_glyphs(kerning):
+    """Glyph names used in a {left: {right: value}} table that the font lacks."""
+    known = set(glyph_widths())
+    used = {g for left, rights in kerning.items() for g in (left, *rights)}
+    return sorted(used - known)
 
 
 def export_js(out_path):
@@ -142,10 +154,9 @@ def export_js(out_path):
 def apply_json(json_path):
     raw = json.loads(Path(json_path).read_text())
     kerning = raw.get("kerning", raw)  # accept wrapped or flat
-    known = set(glyph_widths())
-    bad = [g for g in kerning for r in ((g,) + tuple(kerning[g])) if r not in known]
+    bad = unknown_glyphs(kerning)
     if bad:
-        sys.exit(f"unknown glyph names in {json_path}: {sorted(set(bad))}")
+        sys.exit(f"unknown glyph names in {json_path}: {bad}")
     _, before = read_kerning()
     n = write_kerning(kerning)
     added = sum(1 for l in kerning for r in kerning[l] if r not in before.get(l, {}))
@@ -194,7 +205,10 @@ def audit():
 
 
 DIGITS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-PUNCT = ["comma", "period", "quotesingle", "hyphen"]
+# every other glyph the workbench can show, minus lowercase (same shapes as
+# the capitals) and space (reported separately)
+PUNCT = [g for g in GLYPH_TO_CHAR
+         if g not in UPPER | LOWER and g not in DIGITS and g != "space"]
 CANON = sorted(UPPER) + DIGITS + PUNCT
 
 
@@ -233,6 +247,8 @@ def gaps(out_path):
     total = len(CANON) ** 2
     n_missing = sum(len(v) for v in missing.values())
     space_pairs = sorted((l, r) for l, rs in kerning.items() for r in rs if "space" in (l, r))
+    in_pairs = {g for l, rs in kerning.items() for g in (l, *rs)}
+    never_kerned = [g for g in CANON if not _variants(g) & in_pairs]
 
     def show(g):
         return GLYPH_TO_CHAR.get(g, g)
@@ -269,12 +285,12 @@ def gaps(out_path):
         if left not in missing:
             continue
         combos = " ".join(f"{show(left)}{show(r)}" for r in missing[left])
-        out += [f"### {show(left)}  ({len(missing[left])})", "", f"```", combos, "```", ""]
+        out += [f"### {show(left)}  ({len(missing[left])})", "", "```", combos, "```", ""]
 
+    out += ["## Notes", ""]
+    for g in never_kerned:
+        out.append(f"- `{g}` appears in no kerning pair at all — it is unkerned against every glyph.")
     out += [
-        "## Notes",
-        "",
-        f"- `hyphen` appears in no kerning pair at all — it is unkerned against every glyph.",
         f"- `space` is excluded from the grid above; it currently has {len(space_pairs)} "
         "kerning pairs (␣ = space): "
         + ", ".join(
