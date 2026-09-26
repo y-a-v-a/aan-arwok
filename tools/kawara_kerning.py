@@ -47,7 +47,7 @@ def find_kerning_block(text):
     from 'kerning = {' up to and including its closing '};\n'."""
     m = re.search(r"^kerning = \{$", text, re.M)
     if not m:
-        raise ValueError("no `kerning = {` block found in " + str(GLYPHS_FILE))
+        raise ValueError("no `kerning = {` block found")
     depth = 0
     i = m.start()
     while i < len(text):
@@ -66,9 +66,9 @@ def find_kerning_block(text):
     raise ValueError("unbalanced braces in kerning block")
 
 
-def read_kerning(path=GLYPHS_FILE):
+def read_kerning(path=None):
     """Parse the kerning block. Returns (master_id, {left: {right: int}})."""
-    text = path.read_text()
+    text = Path(path or GLYPHS_FILE).read_text()
     start, end = find_kerning_block(text)
     block = text[start:end]
     master_m = re.search(r'^"([0-9A-F-]+)" = \{$', block, re.M)
@@ -108,9 +108,10 @@ def serialize_kerning(master_id, kerning):
     return "\n".join(out) + "\n"
 
 
-def write_kerning(kerning, path=GLYPHS_FILE):
+def write_kerning(kerning, path=None):
     """Replace the kerning block in the .glyphs file, leaving all other
     bytes untouched. Returns the number of pairs written."""
+    path = Path(path or GLYPHS_FILE)
     master_id, _ = read_kerning(path)
     text = path.read_text()
     start, end = find_kerning_block(text)
@@ -119,10 +120,12 @@ def write_kerning(kerning, path=GLYPHS_FILE):
     return sum(len(rs) for rs in clean.values())
 
 
-def glyph_widths():
+def glyph_widths(path=None):
     """Glyph advance widths from the source, for the workbench."""
     import glyphsLib
-    font = glyphsLib.GSFont(str(GLYPHS_FILE))
+    # GSFont(path) leaves the file open; load() from our own handle doesn't
+    with open(path or GLYPHS_FILE, encoding="utf-8") as fp:
+        font = glyphsLib.load(fp)
     return {g.name: int(g.layers[0].width) for g in font.glyphs}
 
 

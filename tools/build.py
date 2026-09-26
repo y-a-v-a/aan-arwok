@@ -27,7 +27,8 @@ def load_ufos():
     metrics that old Glyphs Mini files sometimes carry."""
     import glyphsLib
 
-    font = glyphsLib.GSFont(str(GLYPHS_FILE))
+    with open(GLYPHS_FILE, encoding="utf-8") as fp:
+        font = glyphsLib.load(fp)
     master = font.masters[0]
     for attr in ("ascender", "capHeight", "descender", "xHeight"):
         setattr(master, attr, int(getattr(master, attr)))

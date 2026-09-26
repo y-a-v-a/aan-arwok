@@ -90,9 +90,9 @@ def _parse_block(name, block):
     return glyph
 
 
-def read_glyphs(path=GLYPHS_FILE):
+def read_glyphs(path=None):
     """Parse every glyph. Returns (order, {name: glyph dict})."""
-    text = path.read_text()
+    text = Path(path or GLYPHS_FILE).read_text()
     order, glyphs = [], {}
     for name, s, e in _glyph_blocks(text):
         order.append(name)
@@ -141,8 +141,9 @@ def validate_paths(paths):
                 raise ValueError(f"bad node {n!r} — want [x, y, type, smooth]")
 
 
-def write_glyph(name, width=None, paths=None, path=GLYPHS_FILE):
+def write_glyph(name, width=None, paths=None, path=None):
     """Replace one glyph's paths and/or width in place. Returns the glyph."""
+    path = Path(path or GLYPHS_FILE)
     text = path.read_text()
     for gname, s, e in _glyph_blocks(text):
         if gname == name:
