@@ -48,6 +48,11 @@ Check for pairs whose case combinations disagree:
 
     make audit
 
+Run the tests for the tools and the workbench server (they work on temporary
+copies and never write to `kawara2.glyphs`):
+
+    make test
+
 ## Color variants
 
 Date painting color variants

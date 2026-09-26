@@ -10,6 +10,7 @@ help:
 	@echo "make apply-glyph FILE=glyph-X.json - apply a glyph-editor JSON export to kawara2.glyphs and rebuild"
 	@echo "make audit   - report case-inconsistent kerning pairs"
 	@echo "make gaps    - regenerate KERNING_CHECK.md (pairs with no kerning)"
+	@echo "make test    - run the unit and end-to-end tests (never writes kawara2.glyphs)"
 
 setup:
 	$(PY) -m venv .venv
@@ -35,4 +36,7 @@ audit:
 gaps:
 	$(VPY) tools/kawara_kerning.py gaps
 
-.PHONY: help setup build kern apply apply-glyph audit gaps
+test:
+	$(VPY) -m unittest discover -s tests -t tests
+
+.PHONY: help setup build kern apply apply-glyph audit gaps test
