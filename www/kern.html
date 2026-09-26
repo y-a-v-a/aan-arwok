@@ -3,41 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>On Kawara — kerning workbench</title>
+<link rel="stylesheet" href="workbench.css">
 <style>
   @font-face {
     font-family: OnKawara;
     src: url("OnKawara-Regular.otf") format("opentype");
   }
-  :root {
-    --bg: #383838; --fg: #f1f1f1;
-    --panel: #1e1e1e; --panel-fg: #d5d5d5; --accent: #cd3838; --line: #4a4a4a;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; height: 100vh; display: flex; flex-direction: column;
-    background: var(--panel); color: var(--panel-fg);
-    font: 13px/1.45 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  header {
-    display: flex; align-items: center; gap: 14px; padding: 8px 14px;
-    border-bottom: 1px solid var(--line); flex-wrap: wrap;
-  }
-  header h1 { font-size: 13px; letter-spacing: .12em; margin: 0; font-weight: 600; }
-  header label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
   .swatch { width: 20px; height: 20px; border-radius: 4px; border: 2px solid transparent; cursor: pointer; padding: 0; }
   .swatch.active { border-color: #fff; }
-  select, input[type=text], input[type=number], textarea, button {
-    background: #2b2b2b; color: var(--panel-fg); border: 1px solid var(--line);
-    border-radius: 4px; padding: 4px 8px; font: inherit;
-  }
-  button { cursor: pointer; }
-  button:hover { border-color: #888; }
-  button.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
-  #status { font-size: 12px; opacity: .85; min-width: 130px; }
-  #mode-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid var(--line); }
-  main { flex: 1; display: flex; min-height: 0; }
-  #stage { flex: 1; display: flex; flex-direction: column; min-width: 0; }
   #textbar { padding: 8px 14px; display: flex; gap: 8px; border-bottom: 1px solid var(--line); }
   #sample { flex: 1; resize: vertical; min-height: 30px; white-space: pre; }
   #preview {
@@ -45,7 +18,8 @@
     padding: 40px 30px; cursor: default;
   }
   #preview .line {
-    font-family: OnKawara, monospace; font-kerning: none;
+    /* --kawara-font points at the freshly rebuilt OTF after a live save */
+    font-family: var(--kawara-font, OnKawara), monospace; font-kerning: none;
     font-feature-settings: "kern" 0, "liga" 0, "calt" 0;
     white-space: pre; line-height: 1.35; width: max-content;
   }
@@ -54,26 +28,14 @@
   #preview:not(.native) .g { cursor: text; }
   .selL { background: rgba(205,56,56,.30); }
   .selR { background: rgba(205,56,56,.30); box-shadow: inset 3px 0 0 var(--accent); }
-  #inspector {
-    border-top: 1px solid var(--line); padding: 10px 14px;
-    display: flex; gap: 18px; align-items: center; flex-wrap: wrap; min-height: 64px;
-  }
+  #inspector { padding-block: 10px; min-height: 64px; }
   #pairname { font-size: 15px; font-weight: 600; min-width: 150px; }
   #pairname small { font-weight: 400; opacity: .7; }
   #inspector .stepper { display: flex; gap: 4px; align-items: center; }
   #kernval { width: 72px; text-align: right; font-size: 15px; }
   #variants { display: flex; gap: 10px; font-size: 12px; }
-  #variants span { cursor: pointer; padding: 2px 6px; border-radius: 3px; background: #2b2b2b; }
+  #variants span { cursor: pointer; padding: 2px 6px; border-radius: 3px; background: var(--control); }
   #variants span.cur { outline: 1px solid var(--accent); }
-  #hint { opacity: .6; font-size: 12px; }
-  aside {
-    width: 250px; border-left: 1px solid var(--line); display: flex; flex-direction: column;
-  }
-  aside input { margin: 8px; }
-  #pairlist { flex: 1; overflow: auto; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
-  #pairlist div { display: flex; justify-content: space-between; padding: 2px 12px; cursor: pointer; }
-  #pairlist div:hover { background: #2b2b2b; }
-  #pairlist div.cur { background: #3a2626; }
   #pairlist .v { opacity: .75; }
   #paircount { padding: 6px 12px; font-size: 11px; opacity: .6; border-top: 1px solid var(--line); }
 </style>
@@ -82,7 +44,7 @@
 <header>
   <h1>ON KAWARA · KERNING</h1>
   <span id="mode-pill">…</span>
-  <a href="glyphed.html" style="color:var(--panel-fg);opacity:.7">glyphs →</a>
+  <a href="glyphed.html">glyphs →</a>
   <label>preset
     <select id="preset">
       <option value="">— sample text —</option>
@@ -113,7 +75,7 @@
   <label title="render with the kerning baked into the OTF instead of the editable values">
     <input type="checkbox" id="native"> font's own kerning
   </label>
-  <span style="flex:1"></span>
+  <span class="spacer"></span>
   <span id="status"></span>
   <button id="save" class="primary">Save</button>
 </header>
@@ -138,7 +100,7 @@
   </div>
   <aside>
     <input type="text" id="filter" placeholder="filter pairs… (e.g. A V)">
-    <div id="pairlist"></div>
+    <div id="pairlist" class="list"></div>
     <div id="paircount"></div>
   </aside>
 </main>
@@ -270,7 +232,7 @@
         const val = getKern(a, b);
         el.textContent = `${a}${b} ${val === null ? "—" : val}`;
         if (a === sel.left && b === sel.right) el.classList.add("cur");
-        el.onclick = () => { sel.left = a; sel.right = b; updateInspector(); };
+        el.onclick = () => { sel.left = a; sel.right = b; updateInspector(); renderPairList(); };
         variants.appendChild(el);
       }
     }
@@ -314,20 +276,25 @@
   });
 
   // ---------- pair list ----------
+  const MAX_ROWS = 600;
   function renderPairList() {
     const q = $("#filter").value.trim().split(/\s+/).filter(Boolean);
     const list = $("#pairlist");
     list.innerHTML = "";
-    let n = 0, shown = 0;
+    let n = 0, matched = 0;
     for (const l of Object.keys(kern).sort()) {
       for (const r of Object.keys(kern[l]).sort()) {
         n++;
         if (q.length === 1 && !(l.includes(q[0]) || r.includes(q[0]))) continue;
         if (q.length >= 2 && !(l === q[0] && r === q[1])) continue;
-        if (shown++ > 600) continue;
+        if (++matched > MAX_ROWS) continue;
         const row = document.createElement("div");
         if (sel && sel.left === l && sel.right === r) row.classList.add("cur");
-        row.innerHTML = `<span>${l} ${r}</span><span class="v">${kern[l][r]}</span>`;
+        const name = document.createElement("span"), val = document.createElement("span");
+        name.textContent = `${l} ${r}`;
+        val.className = "v";
+        val.textContent = kern[l][r];
+        row.append(name, val);
         row.onclick = () => {
           const lc = K.glyphToChar[l], rc = K.glyphToChar[r];
           sample.value = `HH${lc}${rc}HH OO${lc}${rc}OO ${lc}${rc}`;
@@ -338,6 +305,12 @@
         };
         list.appendChild(row);
       }
+    }
+    if (matched > MAX_ROWS) {
+      const more = document.createElement("div");
+      more.className = "more";
+      more.textContent = `… ${matched - MAX_ROWS} more — narrow the filter`;
+      list.appendChild(more);
     }
     $("#paircount").textContent = `${n} pairs in table`;
   }
@@ -366,6 +339,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = "kerning.json";
       a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);   // after the download starts
       dirty = false;
       status.textContent = "downloaded — run: make apply FILE=kerning.json";
     }
@@ -377,9 +351,15 @@
     fontVersion++;
     const fam = "OnKawara-v" + fontVersion;
     const face = new FontFace(fam, `url(OnKawara-Regular.otf?v=${fontVersion})`);
-    await face.load();
+    try {
+      await face.load();
+    } catch {
+      status.textContent += " · reload the page to see the new font";
+      return;
+    }
     document.fonts.add(face);
-    preview.querySelectorAll(".line").forEach(l => l.style.fontFamily = `'${fam}', monospace`);
+    // a custom property, so lines rendered later pick up the new font too
+    preview.style.setProperty("--kawara-font", `'${fam}'`);
   }
 
   // ---------- header controls ----------
@@ -397,7 +377,6 @@
   }));
   $("#native").addEventListener("change", e => {
     preview.classList.toggle("native", e.target.checked);
-    refreshMargins();
     renderPreview();
   });
 

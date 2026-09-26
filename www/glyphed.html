@@ -3,38 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>On Kawara — glyph editor</title>
+<link rel="stylesheet" href="workbench.css">
 <style>
-  :root {
-    --bg: #383838; --fg: #f1f1f1;
-    --panel: #1e1e1e; --panel-fg: #d5d5d5; --accent: #cd3838; --line: #4a4a4a;
-    --metric: #5a6a72; --handle: #7ec3e0;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; height: 100vh; display: flex; flex-direction: column;
-    background: var(--panel); color: var(--panel-fg);
-    font: 13px/1.45 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  header {
-    display: flex; align-items: center; gap: 14px; padding: 8px 14px;
-    border-bottom: 1px solid var(--line); flex-wrap: wrap;
-  }
-  header h1 { font-size: 13px; letter-spacing: .12em; margin: 0; font-weight: 600; }
-  header a { color: var(--panel-fg); opacity: .7; }
-  header label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-  select, input[type=text], input[type=number], button {
-    background: #2b2b2b; color: var(--panel-fg); border: 1px solid var(--line);
-    border-radius: 4px; padding: 4px 8px; font: inherit;
-  }
-  button { cursor: pointer; }
-  button:hover { border-color: #888; }
-  button:disabled { opacity: .4; cursor: default; border-color: var(--line); }
-  button.primary { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
-  #status { font-size: 12px; opacity: .85; min-width: 130px; }
-  #mode-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid var(--line); }
-  main { flex: 1; display: flex; min-height: 0; }
-  #stage { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  :root { --metric: #5a6a72; --handle: #7ec3e0; }
   #canvas { flex: 1; display: block; background: var(--bg); cursor: default; touch-action: none; }
   #canvas .metric { stroke: var(--metric); stroke-width: 1; vector-effect: non-scaling-stroke; }
   #canvas .metric.accent { stroke: var(--accent); }
@@ -48,25 +19,15 @@
   #canvas .node.on  { fill: #f1f1f1; stroke: #1e1e1e; stroke-width: 1; }
   #canvas .node.off { fill: var(--bg); stroke: var(--handle); stroke-width: 1.5; }
   #canvas .node.sel { fill: var(--accent); stroke: #fff; }
-  #inspector {
-    border-top: 1px solid var(--line); padding: 8px 14px;
-    display: flex; gap: 18px; align-items: center; flex-wrap: wrap; min-height: 46px;
-  }
+  #inspector { min-height: 46px; }
   #glyphname { font-size: 15px; font-weight: 600; min-width: 130px; }
   #glyphname small { font-weight: 400; opacity: .7; }
   #nodeinfo { font-family: ui-monospace, Menlo, monospace; font-size: 12px; opacity: .85; min-width: 170px; }
   #widthval { width: 72px; text-align: right; }
-  #hint { opacity: .6; font-size: 12px; }
   #previewbar { border-top: 1px solid var(--line); padding: 6px 14px; display: flex; gap: 10px; align-items: center; }
   #previewtext { width: 260px; }
   #preview { flex: 1; height: 96px; }
   #preview path { fill: var(--fg); }
-  aside { width: 250px; border-left: 1px solid var(--line); display: flex; flex-direction: column; }
-  aside input { margin: 8px; }
-  #glyphlist { flex: 1; overflow: auto; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
-  #glyphlist div { display: flex; justify-content: space-between; padding: 2px 12px; cursor: pointer; }
-  #glyphlist div:hover { background: #2b2b2b; }
-  #glyphlist div.cur { background: #3a2626; }
   #glyphlist .w { opacity: .6; }
   #glyphlist .comp { opacity: .55; font-style: italic; }
 </style>
@@ -78,7 +39,7 @@
   <a href="kern.html">kerning →</a>
   <label>width <input type="number" id="widthval" step="1"></label>
   <button id="fit" title="fit the glyph in the view">fit</button>
-  <span style="flex:1"></span>
+  <span class="spacer"></span>
   <span id="status"></span>
   <button id="revert" title="discard changes since the last save (⌘Z brings them back)" disabled>Revert</button>
   <button id="save" class="primary">Save</button>
@@ -98,7 +59,7 @@
   </div>
   <aside>
     <input type="text" id="filter" placeholder="filter glyphs…">
-    <div id="glyphlist"></div>
+    <div id="glyphlist" class="list"></div>
   </aside>
 </main>
 
@@ -474,7 +435,9 @@
     drag.fx += dx; drag.fy += dy;
     render(); renderPreview();
   });
-  canvas.addEventListener("pointerup", () => { drag = null; });
+  // pointercancel: the OS took the pointer (gesture, alt-tab) — end the drag
+  for (const type of ["pointerup", "pointercancel"])
+    canvas.addEventListener(type, () => { drag = null; });
   canvas.addEventListener("dblclick", e => {
     const t = e.target;
     if (!t.dataset || t.dataset.si === undefined || !isEditable()) return;
@@ -603,6 +566,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = `glyph-${cur}.json`;
       a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);   // after the download starts
       markClean();
       status.textContent = `downloaded — run: make apply-glyph FILE=glyph-${cur}.json`;
     }
