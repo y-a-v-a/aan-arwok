@@ -18,8 +18,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-GLYPHS_FILE = REPO / "kawara2.glyphs"
 sys.path.insert(0, str(REPO / "tools"))
+
+from kawara_kerning import GLYPH_TO_CHAR, GLYPHS_FILE
 
 NODE_RE = re.compile(r'"(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (LINE|CURVE|OFFCURVE)( SMOOTH)?"')
 NODE_TYPES = {"LINE", "CURVE", "OFFCURVE"}
@@ -159,8 +160,12 @@ def write_glyph(name, width=None, paths=None, path=GLYPHS_FILE):
             block = block[:pm.start()] + new_paths + block[pe:]
         else:
             wm = re.search(r"^width = ", block, re.M)
+            if not wm:
+                raise ValueError(f"glyph {name!r} has no layer width to anchor paths to")
             block = block[:wm.start()] + new_paths + "\n" + block[wm.start():]
     if width is not None:
+        if int(width) < 0:
+            raise ValueError(f"width must be >= 0, got {width}")
         block = re.sub(r"^width = \d+;$", f"width = {int(width)};",
                        block, count=1, flags=re.M)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S +0000")
@@ -172,7 +177,6 @@ def write_glyph(name, width=None, paths=None, path=GLYPHS_FILE):
 
 def payload():
     """Everything the editor page needs, as one JSON-able dict."""
-    from kawara_kerning import GLYPH_TO_CHAR
     order, glyphs = read_glyphs()
     return {
         "familyName": "On Kawara",

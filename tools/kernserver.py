@@ -16,9 +16,11 @@ Ctrl+C to stop.
 
 import json
 import sys
+import threading
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlsplit
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "tools"))
@@ -26,6 +28,10 @@ sys.path.insert(0, str(REPO / "tools"))
 import build as build_mod
 import kawara_glyphs
 import kawara_kerning
+
+# saves rewrite kawara2.glyphs and rebuild the OTFs; two at once (a double
+# click on Save) would interleave those writes
+SAVE_LOCK = threading.Lock()
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -42,9 +48,10 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path.startswith("/api/status"):
+        route = urlsplit(self.path).path
+        if route == "/api/status":
             return self._json(200, {"live": True})
-        if self.path.startswith("/api/glyphs"):
+        if route == "/api/glyphs":
             try:
                 return self._json(200, kawara_glyphs.payload())
             except Exception as e:
@@ -52,23 +59,27 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
+        route = urlsplit(self.path).path
         try:
             length = int(self.headers.get("Content-Length", 0))
             payload = json.loads(self.rfile.read(length))
-            if self.path.startswith("/api/kerning"):
+            if not isinstance(payload, dict):
+                raise ValueError("expected a JSON object")
+            if route == "/api/kerning":
                 kerning = payload.get("kerning", payload)
-                known = set(kawara_kerning.glyph_widths())
-                bad = sorted({g for l, rs in kerning.items() for g in (l, *rs) if g not in known})
+                bad = kawara_kerning.unknown_glyphs(kerning)
                 if bad:
                     return self._json(400, {"error": f"unknown glyphs: {bad}"})
-                pairs = kawara_kerning.write_kerning(kerning)
-                build_mod.build()
+                with SAVE_LOCK:
+                    pairs = kawara_kerning.write_kerning(kerning)
+                    build_mod.build()
                 return self._json(200, {"ok": True, "pairs": pairs})
-            if self.path.split("?")[0] == "/api/glyph":   # not /api/glyphs
-                glyph = kawara_glyphs.write_glyph(
-                    payload["name"], width=payload.get("width"),
-                    paths=payload.get("paths"))
-                build_mod.build()
+            if route == "/api/glyph":
+                with SAVE_LOCK:
+                    glyph = kawara_glyphs.write_glyph(
+                        payload["name"], width=payload.get("width"),
+                        paths=payload.get("paths"))
+                    build_mod.build()
                 return self._json(200, {"ok": True, "glyph": glyph})
             return self._json(404, {"error": "unknown endpoint"})
         except (ValueError, KeyError) as e:

@@ -12,7 +12,12 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-GLYPHS_FILE = REPO / "kawara2.glyphs"
+sys.path.insert(0, str(REPO / "tools"))
+
+import kawara_glyphs
+import kawara_kerning
+
+GLYPHS_FILE = kawara_kerning.GLYPHS_FILE
 OTF_ROOT = REPO / "OnKawara-Regular.otf"
 OTF_WWW = REPO / "www" / "OnKawara-Regular.otf"
 
@@ -53,11 +58,8 @@ def build(ttf_path=None):
         ttf.save(ttf_path)
         print(f"built {Path(ttf_path).name}: {ttf['maxp'].numGlyphs} glyphs (TrueType outlines)")
 
-    sys.path.insert(0, str(REPO / "tools"))
-    from kawara_kerning import export_js
-    export_js(REPO / "www" / "kerning.js")
-    from kawara_glyphs import export_js as export_glyphs_js
-    export_glyphs_js(REPO / "www" / "glyphdata.js")
+    kawara_kerning.export_js(REPO / "www" / "kerning.js")
+    kawara_glyphs.export_js(REPO / "www" / "glyphdata.js")
 
 
 if __name__ == "__main__":
