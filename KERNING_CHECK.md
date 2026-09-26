@@ -7,10 +7,10 @@ combinations of a letter pair are the same shape and are collapsed into one
 entry here. A pair listed below renders with zero kerning: often correct, but
 worth a look. Paste a row into the kerning workbench (`make kern`) to check it.
 
-- universe: 40 glyphs squared = **1600** ordered pairs
-- kerned (non-zero): **1364**
+- universe: 48 glyphs squared = **2304** ordered pairs
+- kerned (non-zero): **1380**
 - explicitly set to 0: **157**
-- no kerning pair at all: **79**
+- no kerning pair at all: **767**
 
 ## Explicitly set to 0
 
@@ -22,247 +22,299 @@ These were given a value of exactly 0, so they were considered and settled.
 
 Grouped by left-hand glyph.
 
-### A  (1)
+### A  (9)
 
 ```
-A-
+A- A: A; A! A? A‒ A– A— A―
 ```
 
-### B  (1)
+### B  (9)
 
 ```
-B-
+B- B: B; B! B? B‒ B– B— B―
 ```
 
-### C  (1)
+### C  (9)
 
 ```
-C-
+C- C: C; C! C? C‒ C– C— C―
 ```
 
-### D  (1)
+### D  (9)
 
 ```
-D-
+D- D: D; D! D? D‒ D– D— D―
 ```
 
-### E  (1)
+### E  (9)
 
 ```
-E-
+E- E: E; E! E? E‒ E– E— E―
 ```
 
-### F  (1)
+### F  (9)
 
 ```
-F-
+F- F: F; F! F? F‒ F– F— F―
 ```
 
-### G  (1)
+### G  (9)
 
 ```
-G-
+G- G: G; G! G? G‒ G– G— G―
 ```
 
-### H  (1)
+### H  (9)
 
 ```
-H-
+H- H: H; H! H? H‒ H– H— H―
 ```
 
-### I  (1)
+### I  (9)
 
 ```
-I-
+I- I: I; I! I? I‒ I– I— I―
 ```
 
-### J  (1)
+### J  (9)
 
 ```
-J-
+J- J: J; J! J? J‒ J– J— J―
 ```
 
-### K  (1)
+### K  (9)
 
 ```
-K-
+K- K: K; K! K? K‒ K– K— K―
 ```
 
-### L  (1)
+### L  (9)
 
 ```
-L-
+L- L: L; L! L? L‒ L– L— L―
 ```
 
-### M  (1)
+### M  (9)
 
 ```
-M-
+M- M: M; M! M? M‒ M– M— M―
 ```
 
-### N  (1)
+### N  (9)
 
 ```
-N-
+N- N: N; N! N? N‒ N– N— N―
 ```
 
-### O  (1)
+### O  (9)
 
 ```
-O-
+O- O: O; O! O? O‒ O– O— O―
 ```
 
-### P  (1)
+### P  (9)
 
 ```
-P-
+P- P: P; P! P? P‒ P– P— P―
 ```
 
-### Q  (1)
+### Q  (9)
 
 ```
-Q-
+Q- Q: Q; Q! Q? Q‒ Q– Q— Q―
 ```
 
-### R  (1)
+### R  (9)
 
 ```
-R-
+R- R: R; R! R? R‒ R– R— R―
 ```
 
-### S  (1)
+### S  (9)
 
 ```
-S-
+S- S: S; S! S? S‒ S– S— S―
 ```
 
-### T  (1)
+### T  (9)
 
 ```
-T-
+T- T: T; T! T? T‒ T– T— T―
 ```
 
-### U  (1)
+### U  (9)
 
 ```
-U-
+U- U: U; U! U? U‒ U– U— U―
 ```
 
-### V  (1)
+### V  (5)
 
 ```
-V-
+V: V; V! V? V―
 ```
 
-### W  (1)
+### W  (9)
 
 ```
-W-
+W- W: W; W! W? W‒ W– W— W―
 ```
 
-### X  (1)
+### X  (5)
 
 ```
-X-
+X: X; X! X? X―
 ```
 
-### Y  (1)
+### Y  (9)
 
 ```
-Y-
+Y- Y: Y; Y! Y? Y‒ Y– Y— Y―
 ```
 
-### Z  (1)
+### Z  (9)
 
 ```
-Z-
+Z- Z: Z; Z! Z? Z‒ Z– Z— Z―
 ```
 
-### 0  (1)
+### 0  (9)
 
 ```
-0-
+0- 0: 0; 0! 0? 0‒ 0– 0— 0―
 ```
 
-### 1  (1)
+### 1  (9)
 
 ```
-1-
+1- 1: 1; 1! 1? 1‒ 1– 1— 1―
 ```
 
-### 2  (1)
+### 2  (9)
 
 ```
-2-
+2- 2: 2; 2! 2? 2‒ 2– 2— 2―
 ```
 
-### 3  (1)
+### 3  (9)
 
 ```
-3-
+3- 3: 3; 3! 3? 3‒ 3– 3— 3―
 ```
 
-### 4  (1)
+### 4  (9)
 
 ```
-4-
+4- 4: 4; 4! 4? 4‒ 4– 4— 4―
 ```
 
-### 5  (1)
+### 5  (9)
 
 ```
-5-
+5- 5: 5; 5! 5? 5‒ 5– 5— 5―
 ```
 
-### 6  (1)
+### 6  (9)
 
 ```
-6-
+6- 6: 6; 6! 6? 6‒ 6– 6— 6―
 ```
 
-### 7  (1)
+### 7  (9)
 
 ```
-7-
+7- 7: 7; 7! 7? 7‒ 7– 7— 7―
 ```
 
-### 8  (1)
+### 8  (9)
 
 ```
-8-
+8- 8: 8; 8! 8? 8‒ 8– 8— 8―
 ```
 
-### 9  (1)
+### 9  (9)
 
 ```
-9-
+9- 9: 9; 9! 9? 9‒ 9– 9— 9―
 ```
 
-### ,  (1)
+### ,  (9)
 
 ```
-,-
+,- ,: ,; ,! ,? ,‒ ,– ,— ,―
 ```
 
-### .  (1)
+### .  (9)
 
 ```
-.-
+.- .: .; .! .? .‒ .– .— .―
 ```
 
-### '  (1)
+### '  (9)
 
 ```
-'-
+'- ': '; '! '? '‒ '– '— '―
 ```
 
-### -  (40)
+### -  (46)
 
 ```
--A -B -C -D -E -F -G -H -I -J -K -L -M -N -O -P -Q -R -S -T -U -V -W -X -Y -Z -0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -, -. -' --
+-A -B -C -D -E -F -G -H -J -K -L -N -O -P -Q -R -S -T -U -V -W -X -Y -Z -0 -1 -2 -3 -4 -5 -6 -7 -8 -9 -, -. -' -- -: -; -! -? -‒ -– -— -―
+```
+
+### :  (48)
+
+```
+:A :B :C :D :E :F :G :H :I :J :K :L :M :N :O :P :Q :R :S :T :U :V :W :X :Y :Z :0 :1 :2 :3 :4 :5 :6 :7 :8 :9 :, :. :' :- :: :; :! :? :‒ :– :— :―
+```
+
+### ;  (48)
+
+```
+;A ;B ;C ;D ;E ;F ;G ;H ;I ;J ;K ;L ;M ;N ;O ;P ;Q ;R ;S ;T ;U ;V ;W ;X ;Y ;Z ;0 ;1 ;2 ;3 ;4 ;5 ;6 ;7 ;8 ;9 ;, ;. ;' ;- ;: ;; ;! ;? ;‒ ;– ;— ;―
+```
+
+### !  (48)
+
+```
+!A !B !C !D !E !F !G !H !I !J !K !L !M !N !O !P !Q !R !S !T !U !V !W !X !Y !Z !0 !1 !2 !3 !4 !5 !6 !7 !8 !9 !, !. !' !- !: !; !! !? !‒ !– !— !―
+```
+
+### ?  (48)
+
+```
+?A ?B ?C ?D ?E ?F ?G ?H ?I ?J ?K ?L ?M ?N ?O ?P ?Q ?R ?S ?T ?U ?V ?W ?X ?Y ?Z ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?, ?. ?' ?- ?: ?; ?! ?? ?‒ ?– ?— ?―
+```
+
+### ‒  (46)
+
+```
+‒A ‒B ‒C ‒D ‒E ‒F ‒G ‒H ‒J ‒K ‒L ‒N ‒O ‒P ‒Q ‒R ‒S ‒T ‒U ‒V ‒W ‒X ‒Y ‒Z ‒0 ‒1 ‒2 ‒3 ‒4 ‒5 ‒6 ‒7 ‒8 ‒9 ‒, ‒. ‒' ‒- ‒: ‒; ‒! ‒? ‒‒ ‒– ‒— ‒―
+```
+
+### –  (46)
+
+```
+–A –B –C –D –E –F –G –H –J –K –L –N –O –P –Q –R –S –T –U –V –W –X –Y –Z –0 –1 –2 –3 –4 –5 –6 –7 –8 –9 –, –. –' –- –: –; –! –? –‒ –– –— –―
+```
+
+### —  (46)
+
+```
+—A —B —C —D —E —F —G —H —J —K —L —N —O —P —Q —R —S —T —U —V —W —X —Y —Z —0 —1 —2 —3 —4 —5 —6 —7 —8 —9 —, —. —' —- —: —; —! —? —‒ —– —— —―
+```
+
+### ―  (48)
+
+```
+―A ―B ―C ―D ―E ―F ―G ―H ―I ―J ―K ―L ―M ―N ―O ―P ―Q ―R ―S ―T ―U ―V ―W ―X ―Y ―Z ―0 ―1 ―2 ―3 ―4 ―5 ―6 ―7 ―8 ―9 ―, ―. ―' ―- ―: ―; ―! ―? ―‒ ―– ―— ――
 ```
 
 ## Notes
 
-- `hyphen` appears in no kerning pair at all — it is unkerned against every glyph.
+- `colon` appears in no kerning pair at all — it is unkerned against every glyph.
+- `semicolon` appears in no kerning pair at all — it is unkerned against every glyph.
+- `exclam` appears in no kerning pair at all — it is unkerned against every glyph.
+- `question` appears in no kerning pair at all — it is unkerned against every glyph.
+- `horizontalbar` appears in no kerning pair at all — it is unkerned against every glyph.
 - `space` is excluded from the grid above; it currently has 82 kerning pairs (␣ = space): `A␣`, `B␣`, `D␣`, `E␣`, `F␣`, `H␣`, `I␣`, `J␣`, `K␣`, `L␣`, `M␣`, `N␣`, `P␣`, `R␣`, `S␣`, `T␣`, `Y␣`, `Z␣`, `a␣`, `b␣`, `d␣`, `e␣`, `f␣`, `h␣`, `i␣`, `j␣`, `k␣`, `l␣`, `m␣`, `n␣`, `1␣`, `p␣`, `.␣`, `r␣`, `s␣`, `7␣`, `6␣`, `␣A`, `␣B`, `␣D`, `␣E`, `␣G`, `␣H`, `␣I`, `␣L`, `␣M`, `␣N`, `␣Q`, `␣R`, `␣T`, `␣V`, `␣W`, `␣Y`, `␣a`, `␣b`, `␣d`, `␣e`, `␣5`, `␣4`, `␣g`, `␣h`, `␣i`, `␣l`, `␣m`, `␣n`, `␣9`, `␣o`, `␣1`, `␣q`, `␣'`, `␣r`, `␣t`, `␣3`, `␣2`, `␣v`, `␣w`, `␣y`, `␣0`, `t␣`, `y␣`, `z␣`, `0␣`.
